@@ -11,11 +11,12 @@ def register_view(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
+        email = request.POST['email']
         print(username,password)
         confirm_password = request.POST['confirm-password']
         if password == confirm_password:
             try:
-                user = User.objects.create_user(username=username,password=password)
+                user = User.objects.create_user(username=username,password=password,email=email)
                 user.save()
                 login(request,user)
                 return redirect('login')
