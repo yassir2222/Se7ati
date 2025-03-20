@@ -78,13 +78,14 @@ WSGI_APPLICATION = "se7ati_project.wsgi.application"
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'se7ati_DB',          
+        'NAME': 'shiha',          
         'USER': 'root',              
         'PASSWORD': '',       
         'HOST': 'localhost',          
         'PORT': '3306',                
     }
 }
+AUTH_USER_MODEL = 'se7ati_app.User' # Replace your_app_name
 
 
 # Password validation
