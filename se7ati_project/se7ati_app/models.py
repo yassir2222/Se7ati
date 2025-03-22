@@ -16,7 +16,18 @@ class User(AbstractUser):
 
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    medical_history = models.TextField(blank=True, null=True)
+    date_naissance = models.DateField(null=True, blank=True, verbose_name="Date de naissance")
+    genre = models.CharField(
+        max_length=30,
+        verbose_name="Genre",
+        choices=[
+            ('homme', 'Homme'),
+            ('femme', 'Femme'),
+            ('non-specifie', 'Non spécifié'),  # Ou "Non spécifié"
+        ],
+    )
+    taille = models.FloatField(null=True, blank=True, verbose_name="Taille (en cm)")
+    poids = models.FloatField(null=True, blank=True, verbose_name="Poids (en kg)")
     def __str__(self):
         return self.user.username
 
