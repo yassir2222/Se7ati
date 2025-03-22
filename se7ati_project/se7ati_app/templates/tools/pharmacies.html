@@ -1,164 +1,161 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>index</title>
+  </head>
+  <body>
+    {% include 'includes/navbar.html' %}
 
-</head>
-<body>
+    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 mb-20">
+      <div
+        class="relative isolate overflow-hidden bg-white px-6 pt-20 pb-30 text-center sm:px-16 sm:shadow-sm"
+      >
+        <p
+          class="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-gray-900 sm:text-4xl"
+        >
+          trouver la pharmacie la plus proche en un clic ?
+        </p>
 
-    <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200">
-        <div class="px-3 py-3 lg:px-5 lg:pl-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center justify-start rtl:justify-end">
-              <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
-                  <span class="sr-only">Open sidebar</span>
-                  <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                     <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
-                  </svg>
-               </button>
-              <a href="{% url 'home'%}" class="flex ms-2 md:me-24">
-                <img src="{% static 'images/logo.png'%}" class="h-8 me-3" alt="FlowBite Logo" />
-                <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap"></span>
-              </a>
+        <form action="" method="POST">
+          <br /><br />
+
+          <div class="flex">
+            <select
+              id="VilleSelect1"
+              name="city"
+              class="ml-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option selected disabled>Choisir la ville</option>
+              {% for ville in villes %}
+              <option value="{{ ville.nom }}">{{ ville.nom }}</option>
+              {% endfor %}
+            </select>
+
+            <select
+              id="Quartier1"
+              name="district"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option value="" selected disabled>Choisir le quartier</option>
+            </select>
+
+            <select
+              id="countries"
+              name="duty_type"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option selected disabled>Garde de jour/nuit</option>
+              <option value="jour">
+                Garde de Jour <i>(De 09h A 22h sans Interruption)</i>
+              </option>
+              <option value="nuit">
+                Garde de Nuit <i>(De 22h A 09h sans Interruption)</i>
+              </option>
+            </select>
+            <div class="relative w-full">
+              <button
+                type="submit"
+                class="mr-42 absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                <svg
+                  class="w-4 h-4"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                  />
+                </svg>
+              </button>
             </div>
-            <div class="flex items-center">
-                <div class="flex items-center ms-3">
-                  <div>
-                    <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="dropdown-user">
-                      <span class="sr-only">Open user menu</span>
-                      <img class="w-8 h-8 rounded-full" src="{% static 'images/user.png'%}" alt="user photo">
-                    </button>
-                  </div>
-                  <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm" id="dropdown-user">
-                    <div class="px-4 py-3" role="none">
-                    {% if user.is_authenticated %}
-                      <p class="text-sm text-gray-900 " role="none">
-                        {{ user.username }}
-                      </p>
-                      <p class="text-sm font-medium text-gray-900 truncate " role="none">
-                        {{ user.email }}
-                      </p>
-                      {% endif %}
-                        
-                    
-                    </div>
-                    <ul class="py-1" role="none">
-                      <li>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Dashboard</a>
-                      </li>
-                      <li>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
-                      </li>
-                      <li>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Earnings</a>
-                      </li>
-                      <li>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
           </div>
-        </div>
-      </nav>
+        </form>
 
-      <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 mb-20">
-        <div
-            class="relative isolate overflow-hidden bg-white px-6 pt-20 pb-30 text-center sm:px-16 sm:shadow-sm">
-            <p class="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-               trouver la pharmacie la plus proche en un clic ?
-            </p>
-    
-    
-          <form action="" method="POST">
-            {% csrf_token %}
-                <br><br>
-              
-                <div class="flex">
-                  <select id="VilleSelect1"  name="city" class="ml-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected disabled>Choisir la ville</option>
-                    {% for ville in villes %}
-                    <option value="{{ ville.nom }}">{{ ville.nom }}</option>
-                    {% endfor %}
-                    
-                  </select>
-
-                  <select id="Quartier1" name="district" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="" selected disabled > Choisir le quartier</option>
-                  </select>
-
-                  <select id="countries" name="duty_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected disabled >Garde de jour/nuit</option>
-                    <option value="jour">Garde de Jour <i>(De 09h A 22h sans Interruption)</i> </option>
-                    <option value="nuit">Garde de Nuit <i>(De 22h A 09h sans Interruption)</i> </option>
-                  </select>
-                    <div class="relative w-full">
-                        <button type="submit" class="mr-42 absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"><svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-              </svg></button>
-                    </div>
-                </div>
-          </form>
-    
-            <svg viewBox="0 0 1024 1024"
-                class="absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2 [mask-image:radial-gradient(closest-side,white,transparent)]"
-                aria-hidden="true">
-                <circle cx="512" cy="512" r="512" fill="url(#827591b1-ce8c-4110-b064-7cb85a0b1217)" fill-opacity="0.7">
-                </circle>
-                <defs>
-                    <radialGradient id="827591b1-ce8c-4110-b064-7cb85a0b1217">
-                        <stop stop-color="#3b82f6"></stop>
-                        <stop offset="1" stop-color="#1d4ed8"></stop>
-                    </radialGradient>
-                </defs>
-            </svg>
-        </div>
-    </div>
-    {% for pharmacie in pharmacies %}
-    <div class="flex mt-10 mb-10 max-w-lg bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 ml-80">
-      <img class="mt-4 w-32 h-42 object-cover" src="{% static 'images/pharmacie_icon.png' %}" alt="Pharmacy">
-      <div class="p-5 flex flex-col justify-between">
-          <h3 class="text-xl font-semibold text-gray-800">{{ pharmacie.name }}</h3>
-          <p class="text-gray-600 mt-1">📍 {{ pharmacie.address }}</p>
-          <p class="text-gray-600 mt-1">☎️ {{ pharmacie.phone }}</p>
-          <p class="text-gray-600 mt-1">🕒 {{ pharmacie.duty }}</p>
-          <div class="mt-3">
-              <a href="{{ pharmacie.localisation }}" class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                Voir sur la carte
-              </a>
-          </div>
+        <svg
+          viewBox="0 0 1024 1024"
+          class="absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2 [mask-image:radial-gradient(closest-side,white,transparent)]"
+          aria-hidden="true"
+        >
+          <circle
+            cx="512"
+            cy="512"
+            r="512"
+            fill="url(#827591b1-ce8c-4110-b064-7cb85a0b1217)"
+            fill-opacity="0.7"
+          ></circle>
+          <defs>
+            <radialGradient id="827591b1-ce8c-4110-b064-7cb85a0b1217">
+              <stop stop-color="#3b82f6"></stop>
+              <stop offset="1" stop-color="#1d4ed8"></stop>
+            </radialGradient>
+          </defs>
+        </svg>
       </div>
-  </div>
-  {% endfor %}
-  <script>
-    document.getElementById('VilleSelect1').addEventListener('change', function() {
-        const cityId = this.value;
-        const quartierSelect = document.getElementById('Quartier1');
+    </div>
 
-        quartierSelect.innerHTML = '<option value="">Loading...</option>';
+    <div
+      class="flex max-w-lg bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 ml-80"
+    >
+      <img
+        class="mt-4 w-32 h-42 object-cover"
+        src="{% static 'images/pharmacie_icon.png' %}"
+        alt="Pharmacy"
+      />
+      <div class="p-5 flex flex-col justify-between">
+        <h3 class="text-xl font-semibold text-gray-800">Pharmacie Centrale</h3>
+        <p class="text-gray-600 mt-1">📍 123 Rue de la Santé, Paris</p>
+        <p class="text-gray-600 mt-1">☎️ +33 1 23 45 67 89</p>
+        <p class="text-gray-600 mt-1">🕒 Ouvert de 8h00 à 20h00</p>
+        <div class="mt-3">
+          <a
+            href="#"
+            class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            Voir les détails
+          </a>
+        </div>
+      </div>
+    </div>
 
-        if (cityId) {
+    <script>
+      document
+        .getElementById("VilleSelect1")
+        .addEventListener("change", function () {
+          const cityId = this.value;
+          const quartierSelect = document.getElementById("Quartier1");
+
+          quartierSelect.innerHTML = '<option value="">Loading...</option>';
+
+          if (cityId) {
             fetch("{% url 'get_quartiers' %}?city_id=" + cityId)
-                .then(response => response.json())
-                .then(data => {
-                    quartierSelect.innerHTML = '<option value="" selected disabled > Choisir le quartier</option>';
-                    data.forEach(quartier => {
-                        const option = document.createElement('option');
-                        option.value = quartier.nom_quartier;
-                        option.textContent = quartier.nom_quartier;
-                        quartierSelect.appendChild(option);
-                    });
+              .then((response) => response.json())
+              .then((data) => {
+                quartierSelect.innerHTML =
+                  '<option value="" selected disabled > Choisir le quartier</option>';
+                data.forEach((quartier) => {
+                  const option = document.createElement("option");
+                  option.value = quartier.nom_quartier;
+                  option.textContent = quartier.nom_quartier;
+                  quartierSelect.appendChild(option);
                 });
-        } else {
-            quartierSelect.innerHTML = '<option value="" selected disabled > Choisir le quartier</option>';
-        }
-    });
-  </script>
-      <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-      <script src="{% static 'js/QuartierVille.js' %}"></script>
-      <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>      
-</body>
+              });
+          } else {
+            quartierSelect.innerHTML =
+              '<option value="" selected disabled > Choisir le quartier</option>';
+          }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="{% static 'js/QuartierVille.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+  </body>
+</html>

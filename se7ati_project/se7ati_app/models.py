@@ -10,6 +10,7 @@ class User(AbstractUser):
         ('doctor', 'Doctor'),
     )
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='patient')
+    stream_chat_token = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.username
