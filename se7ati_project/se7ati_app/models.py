@@ -26,3 +26,15 @@ class Doctor(models.Model):
     license_number = models.CharField(max_length=50)
     def __str__(self):
         return "DR "+self.user.username
+    
+class Ville(models.Model):
+    nom = models.CharField(max_length=100, verbose_name="Nom de la ville")
+    def __str__(self):
+        return self.nom
+    
+    
+class Quartier(models.Model):
+    nom_quartier = models.CharField(max_length=100, verbose_name="Nom du quartier")
+    ville = models.ForeignKey(Ville, on_delete=models.CASCADE, related_name="quartiers", verbose_name="Ville")
+    def __str__(self):
+        return f"{self.nom_quartier} ({self.ville.nom})"
