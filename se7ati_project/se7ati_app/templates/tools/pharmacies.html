@@ -78,10 +78,12 @@
                 <br><br>
               
                 <div class="flex">
-                  <select id="VilleSelect1" onchange="getPharmacies()" name="city" class="ml-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <select id="VilleSelect1"  name="city" class="ml-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option selected disabled>Choisir la ville</option>
-                    <option value="Casablanca">Casablanca</option> 
-                    <option value="Marrakech">Marrakech</option>
+                    {% for ville in villes %}
+                    <option value="{{ ville.nom }}">{{ ville.nom }}</option>
+                    {% endfor %}
+                    
                   </select>
 
                   <select id="Quartier1" name="district" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -131,7 +133,30 @@
       </div>
   </div>
   
-  
+  <script>
+    document.getElementById('VilleSelect1').addEventListener('change', function() {
+        const cityId = this.value;
+        const quartierSelect = document.getElementById('Quartier1');
+
+        quartierSelect.innerHTML = '<option value="">Loading...</option>';
+
+        if (cityId) {
+            fetch("{% url 'get_quartiers' %}?city_id=" + cityId)
+                .then(response => response.json())
+                .then(data => {
+                    quartierSelect.innerHTML = '<option value="" selected disabled > Choisir le quartier</option>';
+                    data.forEach(quartier => {
+                        const option = document.createElement('option');
+                        option.value = quartier.nom_quartier;
+                        option.textContent = quartier.nom_quartier;
+                        quartierSelect.appendChild(option);
+                    });
+                });
+        } else {
+            quartierSelect.innerHTML = '<option value="" selected disabled > Choisir le quartier</option>';
+        }
+    });
+  </script>
       <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
       <script src="{% static 'js/QuartierVille.js' %}"></script>
       <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>      
