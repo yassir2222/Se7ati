@@ -5,7 +5,7 @@ from .forms import PatientSignUpForm , DoctorSignUpForm, LoginForm
 from .models import Patient, Doctor, User ,Ville,Quartier
 from django.http import HttpResponse, JsonResponse
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render , get_object_or_404
 import requests
 from bs4 import BeautifulSoup
 from django.views.decorators.csrf import csrf_exempt
@@ -172,7 +172,7 @@ def chercher_pharmacies_view(request):
             pharmacies_data.append(data_pharmacie.copy())
         
  
-        csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'pharmacies_data.csv')
+        csv_path = os.path.join("F:\Projet_Se7ati\se7ati_project\se7ati_app\static", 'pharmacies_data.csv')
         save_to_csv(pharmacies_data, csv_path)
          
         
@@ -269,3 +269,36 @@ def serve_csv(request):
     response = HttpResponse(data, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Quartier_ville.csv"'
     return response
+
+def edit_profile(request):
+          
+        
+        return render(request, 'tools/edit_profil.html')
+    
+
+
+def edit_profile_update(request,user_id):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        
+        date_naissance = request.POST.get('date_naissance')
+        genre = request.POST.get('genre')
+        taille = request.POST.get('taille')
+        poids = request.POST.get('poids')
+        
+        User.username = username
+        User.first_name = first_name
+        User.last_name = last_name
+        User.email = email
+        User.save()
+        
+        patient = get_object_or_404(Patient, user_id=user_id)
+        patient.date_naissance = date_naissance
+        patient.genre = genre
+        patient.taille = float(taille) if taille else None
+        patient.poids = float(poids) if poids else None
+        patient.save()  
+        return render(request, 'tools/edit_profil.html')
