@@ -15,6 +15,8 @@ from django.views.decorators.http import require_POST
 import csv
 import os
 import re
+from django.conf import settings
+from .stream_chat_service import StreamChatService
 
 def home(request):
     return render(request,'index.html')
@@ -269,3 +271,65 @@ def serve_csv(request):
     response = HttpResponse(data, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Quartier_ville.csv"'
     return response
+
+@login_required
+def chat_home(request):
+    """View for the main chat page"""
+    # Get all users except the current user
+    if request.user.user_type == 'doctor':
+        # Doctors can see all patients and other doctors
+        users = User.objects.exclude(id=request.user.id)
+    else:
+        # Patients can see all doctors and other patients
+        users = User.objects.exclude(id=request.user.id)
+    
+    # Generate Stream Chat token if not already generated
+    if not request.user.stream_chat_token:
+        service = StreamChatService()
+        token = service.generate_token(request.user.id)
+        request.user.stream_chat_token = token
+        request.user.save()
+        
+        # Upsert user to Stream Chat
+        service.upsert_user(request.user)
+    
+    context = {
+        'users': users,
+        'stream_api_key': settings.STREAM_API_KEY,
+        'user_token': request.user.stream_chat_token,
+        'user_id': str(request.user.id)
+    }
+    
+    return render(request, 'chat/chat_home.html', context)
+
+@login_required
+def chat_with_user(request, user_id):
+    """View for chatting with a specific user"""
+    try:
+        other_user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return redirect('chat_home')
+    
+    # Generate Stream Chat token if not already generated
+    if not request.user.stream_chat_token:
+        service = StreamChatService()
+        token = service.generate_token(request.user.id)
+        request.user.stream_chat_token = token
+        request.user.save()
+        
+        # Upsert user to Stream Chat
+        service.upsert_user(request.user)
+    
+    # Create or get channel
+    service = StreamChatService()
+    channel = service.get_or_create_channel(request.user.id, other_user.id)
+    
+    context = {
+        'other_user': other_user,
+        'stream_api_key': settings.STREAM_API_KEY,
+        'user_token': request.user.stream_chat_token,
+        'user_id': str(request.user.id),
+        'channel_id': channel.id
+    }
+    
+    return render(request, 'chat/chat_with_user.html', context)
