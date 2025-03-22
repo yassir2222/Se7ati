@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from .forms import PatientSignUpForm , DoctorSignUpForm, LoginForm
-from .models import Patient, Doctor, User 
-from django.http import HttpResponse
+from .models import Patient, Doctor, User ,Ville,Quartier
+from django.http import HttpResponse, JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render
 import requests
@@ -87,6 +87,12 @@ def logout_view(request):
 def chercher_pharmacies_view(request):
     return render(request, 'tools/pharmacies.html')
 
+def get_quartiers(request):
+    city_id = request.GET.get('city_id')
+    if city_id:
+        quartiers = Quartier.objects.filter(ville=Ville.objects.get(nom=city_id).id).values('id', 'nom_quartier')
+        return JsonResponse(list(quartiers), safe=False)
+    return JsonResponse([], safe=False)
 
 data_pharmacie = {'name':'', 'address':'', 'district':'', 'phone':'','localisation':'', 'duty':''}  
 def chercher_pharmacies_view(request):
@@ -172,8 +178,10 @@ def chercher_pharmacies_view(request):
         
     else:
         print("ERREUR !! ")
+        
+    villes = Ville.objects.all().order_by('nom')    
 
-    return render(request, 'tools/pharmacies.html', {'pharmacies': pharmacies_data})
+    return render(request, 'tools/pharmacies.html', {'pharmacies': pharmacies_data, 'villes':villes})
    
 
 def parse_pharmacy_data(text):
