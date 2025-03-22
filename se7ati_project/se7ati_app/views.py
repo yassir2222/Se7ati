@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-
+from django.contrib import messages
 
 import csv
 import os
@@ -333,3 +333,74 @@ def chat_with_user(request, user_id):
     }
     
     return render(request, 'chat/chat_with_user.html', context)
+
+
+
+def edit_profile(request):
+         return render(request, 'tools/edit_profil.html')
+    
+
+
+def edit_profile_update(request,user_id):
+    if request.method == 'POST':
+        
+        user = get_object_or_404(User, id=user_id)
+        patient = get_object_or_404(Patient, user_id=user_id)
+        
+        
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        user.save()
+        
+        
+        patient.date_naissance =convert_date_format(request.POST.get('date_naissance')) 
+        patient.genre = request.POST.get('genre')
+        
+       
+        taille = request.POST.get('taille')
+        poids = request.POST.get('poids')
+        patient.taille = float(taille) if taille else None
+        patient.poids = float(poids) if poids else None
+        patient.save()
+        
+        
+        messages.success(request, "Profile updated successfully!")
+        
+    return render(request, 'tools/edit_profil.html', {'patient': patient , 'date_naissance': convert_date_format_inverse(patient.date_naissance)})
+
+def convert_date_format(date_string):
+
+        parts = date_string.strip().split('/')
+        if len(parts) != 3:
+            return None
+            
+        day, month, year = parts
+        day = int(day)
+        month = int(month)
+        year = int(year)
+        
+       
+        if not (1 <= day <= 31 and 1 <= month <= 12 and 1000 <= year <= 9999):
+            return None
+        return f"{year:04d}-{month:02d}-{day:02d}"
+    
+def convert_date_format_inverse(date_string):
+
+        parts = date_string.strip().split('-')
+        if len(parts) != 3:
+            return None
+            
+        year, month, day = parts
+
+        year = int(year)
+        month = int(month)
+        day = int(day)
+
+        if not (1 <= day <= 31 and 1 <= month <= 12 and 1000 <= year <= 9999):
+            return None
+
+        return f"{day:02d}/{month:02d}/{year:04d}"
+
+    

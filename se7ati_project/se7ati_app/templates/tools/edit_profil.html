@@ -96,11 +96,11 @@
             <div class="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
                 <h2 class="pl-6 text-2xl font-bold sm:text-xl">Public Profile</h2>
 
-                <form class="grid max-w-2xl mx-auto mt-8">
+              
                     <div class="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
 
-                        <img class="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
-                            src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZhY2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                        <img class="object-cover w-40 h-40 p-1 rounded-full ring-3 ring-indigo-300 dark:ring-indigo-500"
+                            src="{% static 'images/patient.png'%}"
                             alt="Bordered avatar">
 
                         <div class="flex flex-col space-y-5 sm:ml-8">
@@ -116,7 +116,8 @@
                     </div>
 
                     <div class="items-center mt-8 sm:mt-14 text-[#202142]">
-<form method="post" action="">
+<form method="post" action="{% url 'edit_profile_update' user_id=user.id %}">
+    {% csrf_token %}
                         <div
                             class="flex flex-col items-center w-full mb-2 space-x-0 space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 sm:mb-6">
                             <div class="w-full">
@@ -152,9 +153,10 @@
                             <label for="profession"
                                 class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white">Genre</label>
                            
-                                <select id="Quartier1" name="district" class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
-                                    <option value="" selected disabled > Choisir le quartier</option>
-                                  </select>
+                                <select id="genre" name="genre" class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                                    <option value="homme" {% if patient.genre == 'homme' %}selected{% endif %}> Homme</option>
+                                    <option value="femme" {% if patient.genre == 'femme' %}selected{% endif %}> Femme </option>
+                                </select>
                         </div>
                         <div class="mb-2 sm:mb-6">
                             <label for="profession"
@@ -168,21 +170,21 @@
                                 class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white">Height</label>
                             <input type="text" id="profession"
                                 class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
-                                placeholder="Taille" value="" name="taille" required>
+                                placeholder="Taille" value="{{ patient.taille }}" name="taille" required>
                         </div>
                         <div class="mb-2 sm:mb-6">
                             <label for="profession"
                                 class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white">Weight</label>
                             <input type="text" id="profession"
                                 class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
-                                placeholder="Poids" value="" name="poids" required>
+                                placeholder="Poids" value="{{ patient.poids }}" name="poids" required>
                         </div>
 
                         
                         <div class="mb-6 relative ">
                             <label for="message"
                             class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white">Date of birth</label>
-                            <input id="datepicker-actions" name="date_naissance'" datepicker datepicker-buttons datepicker-autoselect-today type="text" class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 " placeholder="Select date">
+                            <input id="datepicker-actions" name="date_naissance" datepicker datepicker-buttons datepicker-autoselect-today type="text" class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 " placeholder="Select date" value="{{ date_naissance }}">
                         </div>
 
                         
