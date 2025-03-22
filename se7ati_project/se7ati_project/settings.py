@@ -131,3 +131,7 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# GetStream Chat Configuration
+STREAM_API_KEY = 'f8mbckcwm85e' 
+STREAM_API_SECRET = 'grxq3m36ypg3h7fmfq3xbyeaw2gp9d6tqux74ctrxmg4enegdzp42g8wpt3d2dmx'  
