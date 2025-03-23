@@ -17,6 +17,11 @@ import os
 import re
 from django.conf import settings
 from .stream_chat_service import StreamChatService
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+import pandas as pd
+import numpy as np
 
 def home(request):
     return render(request,'index.html')
@@ -404,16 +409,57 @@ def convert_date_format_inverse(date_string):
         return f"{day:02d}/{month:02d}/{year:04d}"
     
     
-def   diabetes_predicton(request):
-    current_user = request.user
-    if current_user.is_authenticated:
-        patient = Patient.objects.get(user_id=current_user.id)
-        date_naissance= patient.date_naissance
+def diabetes_predicton(request):
+    if(request.method == 'POST'):
+        data = pd.read_csv(r'F:/Projet_Se7ati/se7ati_project/se7ati_app/static/diabetes.csv')  
+        x = data.drop('Outcome', axis=1)
+        y = data['Outcome']  
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
+        model = LogisticRegression()
+        model.fit(x_train, y_train)
         
-        current_year = datetime.now().year
-        print(current_year - date_naissance.year)
-        return render(request, 'tools/diabetes_risk_prediciton.html', {'patient': patient,'age': current_year - date_naissance.year})
+        # Get and convert input values to float
+        age = float(request.POST.get('age', 0) or 0.0)
+        Pregnancies = float(request.POST.get('Pregnancies', 0) or 0.0)
+        Glucose = float(request.POST.get('Glucose', 0) or 0.0)
+        BloodP = float(request.POST.get('BP', 0) or 0.0)
+        SkinThikness = float(request.POST.get('Skin', 0) or 0.0)
+        DPF = float(request.POST.get('DPF', 0) or 0.0)
+        Insulin = float(request.POST.get('insulin', 0) or 0.0)
+        bmi = float(request.POST.get('bmi', 0) or 0.0)
+
+        input_data = np.array([[
+            Pregnancies, Glucose, BloodP, SkinThikness, Insulin, bmi, DPF, age
+        ]])
+        
+
+        pred = model.predict(input_data)
+
+        result_pred = ""
+        
+        if pred[0] == 1:
+            sumury_result = "positive"
+            result_pred = "Based on the analysis, the prediction indicates that you  may be at risk of diabetes . We recommend consulting with a healthcare professional for further evaluation and guidance on managing your health."
+        else:
+            sumury_result = "negative"
+            result_pred = "The analysis indicates that you  are not  at risk of diabetes. However, maintaining a healthy lifestyle and regular check-ups are always recommended to stay in good health."
+            
+        return render(request, 'tools/diabetes_risk_prediciton.html', {'result_pred': result_pred,
+            'result_type': sumury_result})
     else:
-        return render(request, 'tools/diabetes_risk_prediciton.html')
+        current_user = request.user
+        if current_user.is_authenticated:
+            patient = Patient.objects.get(user_id=current_user.id)
+            date_naissance = patient.date_naissance
+            
+            current_year = datetime.now().year
+            print(current_year - date_naissance.year)
+            return render(request, 'tools/diabetes_risk_prediciton.html', {'patient': patient,'age': current_year - date_naissance.year})
+        else:
+            return render(request, 'tools/diabetes_risk_prediciton.html')
+    
+
+         
+
 
     
