@@ -15,7 +15,7 @@ urlpatterns = [
     path('edit_profile/<int:user_id>/update', views.edit_profile_update, name='edit_profile_update'),  # AJAX endpoint for quartiers
     path('chat/', views.chat_home, name='chat_home'),
     path('chat/<int:user_id>/', views.chat_with_user, name='chat_with_user'),
-# AJAX endpoint for quartiers
+    path('diabetes_predicton/', views.diabetes_predicton, name='diabetes_predicton'),
 
 
 ]

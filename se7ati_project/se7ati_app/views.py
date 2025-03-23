@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-
+from datetime import datetime
 import csv
 import os
 import re
@@ -402,5 +402,18 @@ def convert_date_format_inverse(date_string):
             return None
 
         return f"{day:02d}/{month:02d}/{year:04d}"
+    
+    
+def   diabetes_predicton(request):
+    current_user = request.user
+    if current_user.is_authenticated:
+        patient = Patient.objects.get(user_id=current_user.id)
+        date_naissance= patient.date_naissance
+        
+        current_year = datetime.now().year
+        print(current_year - date_naissance.year)
+        return render(request, 'tools/diabetes_risk_prediciton.html', {'patient': patient,'age': current_year - date_naissance.year})
+    else:
+        return render(request, 'tools/diabetes_risk_prediciton.html')
 
     
