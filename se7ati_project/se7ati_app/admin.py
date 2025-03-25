@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import Ville, Quartier, Patient, User, Doctor
+from .models import Ville, Quartier, Patient, User, Doctor,ChatMessage
 
 # Personnaliser l'administration des utilisateurs
 @admin.register(User)
@@ -37,5 +37,12 @@ class DoctorAdmin(admin.ModelAdmin):
     list_display = ('user', 'specialization', 'license_number')
     search_fields = ('user__username', 'user__email', 'specialization')
     list_filter = ('specialization',)
+    
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ('user', 'message', 'response', 'created_at')
+    search_fields = ('user__username', 'message', 'response')  
+    list_filter = ('created_at',)  
+    ordering = ('created_at',)   
 
 

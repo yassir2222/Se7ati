@@ -2,14 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from .forms import PatientSignUpForm , DoctorSignUpForm, LoginForm
-from .models import Patient, Doctor, User ,Ville,Quartier
+from .models import Patient, Doctor, User ,Ville,Quartier,ChatMessage
 from django.http import HttpResponse, JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render , get_object_or_404
 import requests
 from bs4 import BeautifulSoup
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
 from django.contrib import messages
 from datetime import datetime
 import csv
@@ -19,9 +17,11 @@ from django.conf import settings
 from .stream_chat_service import StreamChatService
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+import google.generativeai as genai
 
 import pandas as pd
 import numpy as np
+import markdown
 
 def home(request):
     return render(request,'index.html')
@@ -460,7 +460,39 @@ def diabetes_predicton(request):
     
 
          
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 def chat_bot(request):
-    return render(request, 'chat_bot/chat_main.html')
+    if request.method == 'POST':
+        user_input = request.POST.get('message')
+        contexte = """
+                    Tu es un assistant spécialisé dans le diabète. Ton rôle est de répondre aux questions concernant
+                    le diabète de manière informative, précise et concise.  
+                    Tu dois rester strictement dans le domaine du diabète. 
+                    Si une question n'est pas liée au diabète, 
+                    tu dois poliment indiquer que tu ne peux répondre qu'aux questions sur le diabète. 
+                    Fournis des informations basées sur des connaissances médicales générales et ne donne jamais de conseils médicaux personnalisés.
+                    utiliser des emojis adapté au html
+                """
+
+        prompt = f"{contexte}\n\nQuestion: {user_input}\nRéponse:"
+
+        try:
+           
+            model = genai.GenerativeModel('gemini-2.0-flash')
+            response = model.generate_content(prompt).text
+            html_response = markdown.markdown(response)
+           
+            ChatMessage.objects.create(
+                user=request.user,
+                message=user_input,
+                response=html_response
+            )
+
+            return JsonResponse({'message': user_input, 'response': html_response})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    chat_history = ChatMessage.objects.filter(user=request.user).order_by('created_at')
+    return render(request, 'chat_bot/chat_main.html', {'chat_history': chat_history})
     
