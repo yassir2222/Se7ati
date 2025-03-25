@@ -50,3 +50,13 @@ class Quartier(models.Model):
     ville = models.ForeignKey(Ville, on_delete=models.CASCADE, related_name="quartiers", verbose_name="Ville")
     def __str__(self):
         return f"{self.nom_quartier} ({self.ville.nom})"
+    
+    
+class ChatMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    response = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Chat by {self.user.username} at {self.created_at}" 
