@@ -495,4 +495,7 @@ def chat_bot(request):
 
     chat_history = ChatMessage.objects.filter(user=request.user).order_by('created_at')
     return render(request, 'chat_bot/chat_main.html', {'chat_history': chat_history})
+
+def glucoseLevel(request):
+    return render(request, 'statistics/glycemi_statistcs.html')
     
