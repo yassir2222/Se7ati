@@ -16,6 +16,7 @@ urlpatterns = [
     path('chat/', views.chat_home, name='chat_home'),
     path('chat/<int:user_id>/', views.chat_with_user, name='chat_with_user'),
     path('diabetes_predicton/', views.diabetes_predicton, name='diabetes_predicton'),
+    path('chat_bot/', views.chat_bot, name='chat_bot'),
 
 
 ]

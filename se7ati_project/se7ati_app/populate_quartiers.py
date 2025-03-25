@@ -69,7 +69,7 @@ quartiers = [
     "LAMHAMID",
 ]
 
-# 3. Ajouter les quartiers à Marrakech (Bulk Creation)
+
 quartiers_a_creer = []
 for nom_quartier in quartiers:
     if not Quartier.objects.filter(nom_quartier=nom_quartier, ville=marrakech).exists():
