@@ -461,5 +461,6 @@ def diabetes_predicton(request):
 
          
 
-
+def chat_bot(request):
+    return render(request, 'chat_bot/chat_main.html')
     
