@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from .forms import PatientSignUpForm , DoctorSignUpForm, LoginForm
-from .models import Patient, Doctor, User ,Ville,Quartier,ChatMessage
+from .models import Patient, Doctor, User ,Ville,Quartier,ChatMessage,MesureGlycemie
 from django.http import HttpResponse, JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render , get_object_or_404
@@ -18,6 +18,7 @@ from .stream_chat_service import StreamChatService
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 import google.generativeai as genai
+from django.utils.timezone import now, timedelta  
 
 import pandas as pd
 import numpy as np
@@ -476,7 +477,6 @@ def chat_bot(request):
                 """
 
         prompt = f"{contexte}\n\nQuestion: {user_input}\nRéponse:"
-
         try:
            
             model = genai.GenerativeModel('gemini-2.0-flash')
@@ -497,5 +497,198 @@ def chat_bot(request):
     return render(request, 'chat_bot/chat_main.html', {'chat_history': chat_history})
 
 def glucoseLevel(request):
+    
     return render(request, 'statistics/glycemi_statistcs.html')
+
+def add_glucose(request):
+    
+    if request.method == 'POST':
+        valeur = request.POST.get('glycemia')
+        date = request.POST.get('date')  
+        time = request.POST.get('time') 
+        user = request.user
+        date_mesure = datetime.strptime(f"{date} {time}", '%m/%d/%Y %H:%M')
+        
+        MesureGlycemie.objects.create(
+            user=user,
+            valeur=float(valeur),
+            date_mesure=date_mesure
+        )
+        return redirect('glucose_Today')
+    
+    return redirect('glucose_Today')
+
+def glucose_view(request):
+    return glucose_Today(request)
+
+def glucose_last_week(request):
+    end_date = now()  
+    start_date = end_date - timedelta(days=7) 
+    
+    mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__range=[start_date, end_date]  
+    ).order_by('-date_mesure')
+    
+    mesures_data = [  
+        {  
+            'valeur': mesure.valeur,  
+            'date': mesure.date_mesure.strftime('%d/%m/%Y'),  
+            'heure': mesure.date_mesure.strftime('%H:%M'),
+            'Date_heure' : f"{mesure.date_mesure.strftime('%d/%m')} {mesure.date_mesure.strftime('%H:%M')}"
+        }  
+        for mesure in mesures  
+    ]  
+    
+    valeurs = [mesure['valeur'] for mesure in mesures_data]
+    dates = [mesure['date'] for mesure in mesures_data]
+    dates_heure = [mesure['Date_heure'] for mesure in mesures_data]
+    
+    # Passer les données au contexte
+    context = {  
+        'valeurs': valeurs,  
+        'dates': dates_heure,  
+    }
+    if(request.method == "POST"):
+        redirect('add_glucose')
+    
+     
+    return render(request , 'statistics/glycemi_statistcs.html', context)
+
+
+def glucose_last_30day(request):
+    end_date = now()  
+    start_date = end_date - timedelta(days=30) 
+    
+    mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__range=[start_date, end_date]  
+    ).order_by('-date_mesure')
+    
+    mesures_data = [  
+        {  
+            'valeur': mesure.valeur,  
+            'date': mesure.date_mesure.strftime('%d/%m/%Y'),  
+            'heure': mesure.date_mesure.strftime('%H:%M'),
+            'Date_heure' : f"{mesure.date_mesure.strftime('%d/%m')} {mesure.date_mesure.strftime('%H:%M')}"
+        }  
+        for mesure in mesures  
+    ]  
+    
+    valeurs = [mesure['valeur'] for mesure in mesures_data]
+    dates = [mesure['date'] for mesure in mesures_data]
+    dates_heure = [mesure['Date_heure'] for mesure in mesures_data]
+    
+    # Passer les données au contexte
+    context = {  
+        'valeurs': valeurs,  
+        'dates': dates_heure,  
+    }
+    if(request.method == "POST"):
+        redirect('add_glucose')
+     
+    return render(request , 'statistics/glycemi_statistcs.html', context)
+
+
+def glucose_last_90day(request):
+    end_date = now()  
+    start_date = end_date - timedelta(days=30) 
+    
+    mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__range=[start_date, end_date]  
+    ).order_by('-date_mesure')
+    
+    mesures_data = [  
+        {  
+            'valeur': mesure.valeur,  
+            'date': mesure.date_mesure.strftime('%d/%m/%Y'),  
+            'heure': mesure.date_mesure.strftime('%H:%M'),
+            'Date_heure' : f"{mesure.date_mesure.strftime('%d/%m')} {mesure.date_mesure.strftime('%H:%M')}"
+        }  
+        for mesure in mesures  
+    ]  
+    
+    valeurs = [mesure['valeur'] for mesure in mesures_data]
+    dates = [mesure['date'] for mesure in mesures_data]
+    dates_heure = [mesure['Date_heure'] for mesure in mesures_data]
+    
+    # Passer les données au contexte
+    context = {  
+        'valeurs': valeurs,  
+        'dates': dates_heure,  
+    }
+    if(request.method == "POST"):
+        redirect('add_glucose')   
+     
+    return render(request , 'statistics/glycemi_statistcs.html', context)
+
+def glucose_Yesterday(request):
+    end_date = now().date()  
+    start_date = end_date - timedelta(days=1) 
+    
+    mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__date=now().date() - timedelta(days=1)   
+    ).order_by('-date_mesure')
+    
+    mesures_data = [  
+        {  
+            'valeur': mesure.valeur,  
+            'date': mesure.date_mesure.strftime('%d/%m/%Y'),  
+            'heure': mesure.date_mesure.strftime('%H:%M'),
+            'Date_heure' : f"{mesure.date_mesure.strftime('%d/%m')} {mesure.date_mesure.strftime('%H:%M')}"
+        }  
+        for mesure in mesures  
+    ]  
+    
+    valeurs = [mesure['valeur'] for mesure in mesures_data]
+    dates = [mesure['date'] for mesure in mesures_data]
+    dates_heure = [mesure['Date_heure'] for mesure in mesures_data]
+    
+    # Passer les données au contexte
+    context = {  
+        'valeurs': valeurs,  
+        'dates': dates_heure,  
+    }
+    if(request.method == "POST"):
+        redirect('add_glucose')   
+     
+    return render(request , 'statistics/glycemi_statistcs.html', context)
+
+def glucose_Today(request):
+    end_date = now()  
+    start_date = end_date - timedelta(days=1) 
+    
+    mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__date=now().date()  
+    ).order_by('-date_mesure')
+    
+    mesures_data = [  
+        {  
+            'valeur': mesure.valeur,  
+            'date': mesure.date_mesure.strftime('%d/%m/%Y'),  
+            'heure': mesure.date_mesure.strftime('%H:%M'),
+            'Date_heure' : f"{mesure.date_mesure.strftime('%d/%m')} {mesure.date_mesure.strftime('%H:%M')}"
+        }  
+        for mesure in mesures  
+    ]  
+    
+    valeurs = [mesure['valeur'] for mesure in mesures_data]
+    dates = [mesure['date'] for mesure in mesures_data]
+    dates_heure = [mesure['Date_heure'] for mesure in mesures_data]
+    
+    # Passer les données au contexte
+    context = {  
+        'valeurs': valeurs,  
+        'dates': dates_heure,  
+    }
+    if(request.method == "POST"):
+        redirect('add_glucose')  
+     
+    return render(request , 'statistics/glycemi_statistcs.html', context)
+
+
+
     
