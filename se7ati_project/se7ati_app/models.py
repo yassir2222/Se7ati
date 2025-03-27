@@ -1,7 +1,6 @@
 from django.db import models
+from datetime import datetime
 
-# Create your models here.
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser): 
@@ -60,3 +59,12 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"Chat by {self.user.username} at {self.created_at}" 
+    
+    
+class MesureGlycemie (models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    valeur = models.FloatField()
+    date_mesure  = models.DateTimeField(default=datetime.now)
+    
+    def __str__(self):  
+        return f"Suivi Glycémie : {self.valeur} mmol/L le {self.date_mesure.strftime('%d-%m-%Y %H:%M')}"  

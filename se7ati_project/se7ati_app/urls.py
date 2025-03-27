@@ -17,7 +17,14 @@ urlpatterns = [
     path('chat/<int:user_id>/', views.chat_with_user, name='chat_with_user'),
     path('diabetes_predicton/', views.diabetes_predicton, name='diabetes_predicton'),
     path('chat_bot/', views.chat_bot, name='chat_bot'),
-    path('glucoseLevel/', views.glucoseLevel, name='glucoseLevel'),
+    path('glucoseLevel/', views.glucose_view, name='glucoseLevel'),
+    path('glucoseLevel/glucose_last_week', views.glucose_last_week, name='glucose_last_week'),
+    path('glucoseLevel/add/', views.add_glucose, name='add_glucose'),
+    path('glucose_last_30day/', views.glucose_last_30day, name='glucose_last_30day'),
+    path('glucose_last_90day/', views.glucose_last_90day, name='glucose_last_90day'),
+    path('glucoseLevel/glucose_Yesterday', views.glucose_Yesterday, name='glucose_Yesterday'),
+    path('glucose_Today/glucose_Today', views.glucose_Today, name='glucose_Today'),
+    
 
 
 ]
