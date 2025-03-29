@@ -377,7 +377,7 @@ def edit_profile_update(request,user_id):
     return render(request, 'tools/edit_profil.html', {'patient': patient , 'date_naissance': convert_date_format_inverse(patient.date_naissance)})
 
 def convert_date_format(date_string):
-
+        print("###########################"+date_string)
         parts = date_string.strip().split('/')
         if len(parts) != 3:
             return None
@@ -393,7 +393,7 @@ def convert_date_format(date_string):
         return f"{year:04d}-{month:02d}-{day:02d}"
     
 def convert_date_format_inverse(date_string):
-
+    if(date_string is not None):
         parts = date_string.strip().split('-')
         if len(parts) != 3:
             return None
@@ -408,6 +408,8 @@ def convert_date_format_inverse(date_string):
             return None
 
         return f"{day:02d}/{month:02d}/{year:04d}"
+    else:
+        return None
     
     
 def diabetes_predicton(request):
@@ -451,11 +453,17 @@ def diabetes_predicton(request):
         current_user = request.user
         if current_user.is_authenticated:
             patient = Patient.objects.get(user_id=current_user.id)
-            date_naissance = patient.date_naissance
-            
+            date_naissance = patient.date_naissance.year if patient.date_naissance else 0
             current_year = datetime.now().year
-            print(current_year - date_naissance.year)
-            return render(request, 'tools/diabetes_risk_prediciton.html', {'patient': patient,'age': current_year - date_naissance.year})
+            if patient.date_naissance is None :
+                age_calculated = 0
+            else:
+                age_calculated =  current_year - date_naissance
+
+            
+            
+            
+            return render(request, 'tools/diabetes_risk_prediciton.html', {'patient': patient,'age': age_calculated})
         else:
             return render(request, 'tools/diabetes_risk_prediciton.html')
     
