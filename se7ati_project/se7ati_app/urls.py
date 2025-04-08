@@ -1,15 +1,16 @@
 from django.urls import path
 from . import views
 
+
+
 urlpatterns = [
     path('', views.home, name='home'),
-    path('register/doctor/', views.patient_register, name='register'),
-    path('register/patient/', views.doctor_register, name='register'),
-
+    path('/doctor', views.Dr_home, name='Dr_home'),
+    path('register/doctor/', views.doctor_register, name='doctor_register'),
+    path('register/patient/', views.patient_register, name='patient_register'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('pharmacy/', views.chercher_pharmacies_view, name='chercher_pharmacies_view'),
-    path('file/', views.serve_csv, name='serve_csv'),
     path('get-quartiers/', views.get_quartiers, name='get_quartiers'),
     path('edit_profile/', views.edit_profile, name='edit_profile'), 
     path('edit_profile/<int:user_id>/update', views.edit_profile_update, name='edit_profile_update'),  # AJAX endpoint for quartiers
@@ -24,7 +25,6 @@ urlpatterns = [
     path('glucose_last_90day/', views.glucose_last_90day, name='glucose_last_90day'),
     path('glucoseLevel/glucose_Yesterday', views.glucose_Yesterday, name='glucose_Yesterday'),
     path('glucose_Today/glucose_Today', views.glucose_Today, name='glucose_Today'),
-    
-
-
+    path('test', views.debug_redirect_uri, name='debug_redirect_uri'),
+    path('glucoseLevel/get-analysis/', views.get_data, name='get_analysis'),
 ]

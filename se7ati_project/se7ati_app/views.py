@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from .forms import PatientSignUpForm , DoctorSignUpForm, LoginForm
 from .models import Patient, Doctor, User ,Ville,Quartier,ChatMessage,MesureGlycemie
 from django.http import HttpResponse, JsonResponse
-from django.http import HttpResponse
 from django.shortcuts import render , get_object_or_404
 import requests
 from bs4 import BeautifulSoup
@@ -13,19 +12,26 @@ from datetime import datetime
 import csv
 import os
 import re
+from pathlib import Path
 from django.conf import settings
 from .stream_chat_service import StreamChatService
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 import google.generativeai as genai
 from django.utils.timezone import now, timedelta  
-
+from django.urls import reverse
+from urllib.parse import urlparse
+from django.utils import timezone
 import pandas as pd
 import numpy as np
 import markdown
 
 def home(request):
     return render(request,'index.html')
+
+def Dr_home(request):
+    return render(request,'doctor/dashboard.html')
+
 
 def patient_register(request):
     if request.method == 'POST':
@@ -45,9 +51,10 @@ def doctor_register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('login')  
+            return redirect('login') 
+    else :    
         form = DoctorSignUpForm()
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'registration/register_doctor.html', {'form': form})
 
 
 def user_login(request):
@@ -78,7 +85,7 @@ def login_view(request):
                 if user.user_type == 'patient':
                     return redirect('home')
                 elif user.user_type == 'doctor':
-                    return redirect('home')
+                    return redirect('Dr_home')
                 else:
                     return redirect('home')  # Fallback
         else:
@@ -179,9 +186,9 @@ def chercher_pharmacies_view(request):
             print("####################################################")
             pharmacies_data.append(data_pharmacie.copy())
         
- 
-        csv_path = os.path.join("F:\Projet_Se7ati\se7ati_project\se7ati_app\static", 'pharmacies_data.csv')
-        save_to_csv(pharmacies_data, csv_path)
+        parent = Path(__file__).parent
+        path = os.path.join(parent, 'static', 'pharmacies_data.csv')
+        save_to_csv(pharmacies_data, path)
          
         
     else:
@@ -270,13 +277,7 @@ def convert_string(input_string):
 def about(request):
     return HttpResponse('About page')
 
-def serve_csv(request):
-    file_path = os.path.join('F:\Projet_Se7ati\se7ati_project\se7ati_app\static\Quartier_ville.csv')
-    with open(file_path, 'r', encoding='utf-8') as file:
-        data = file.read()
-    response = HttpResponse(data, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Quartier_ville.csv"'
-    return response
+
 
 @login_required
 def chat_home(request):
@@ -414,7 +415,9 @@ def convert_date_format_inverse(date_string):
     
 def diabetes_predicton(request):
     if(request.method == 'POST'):
-        data = pd.read_csv(r'F:/Projet_Se7ati/se7ati_project/se7ati_app/static/diabetes.csv')  
+        parent = Path(__file__).parent
+        path = os.path.join(parent, 'static', 'diabetes.csv')
+        data = pd.read_csv(path)
         x = data.drop('Outcome', axis=1)
         y = data['Outcome']  
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
@@ -555,7 +558,8 @@ def glucose_last_week(request):
     # Passer les données au contexte
     context = {  
         'valeurs': valeurs,  
-        'dates': dates_heure,  
+        'dates': dates_heure,
+        'period' : "Last 7 days"  
     }
     if(request.method == "POST"):
         redirect('add_glucose')
@@ -590,7 +594,8 @@ def glucose_last_30day(request):
     # Passer les données au contexte
     context = {  
         'valeurs': valeurs,  
-        'dates': dates_heure,  
+        'dates': dates_heure,
+        'period' : "Last 30 days"  
     }
     if(request.method == "POST"):
         redirect('add_glucose')
@@ -624,7 +629,8 @@ def glucose_last_90day(request):
     # Passer les données au contexte
     context = {  
         'valeurs': valeurs,  
-        'dates': dates_heure,  
+        'dates': dates_heure,
+        'period' : "Last 90 days"  
     }
     if(request.method == "POST"):
         redirect('add_glucose')   
@@ -657,7 +663,8 @@ def glucose_Yesterday(request):
     # Passer les données au contexte
     context = {  
         'valeurs': valeurs,  
-        'dates': dates_heure,  
+        'dates': dates_heure,
+        'period' : "Yesterday"  
     }
     if(request.method == "POST"):
         redirect('add_glucose')   
@@ -690,13 +697,139 @@ def glucose_Today(request):
     # Passer les données au contexte
     context = {  
         'valeurs': valeurs,  
-        'dates': dates_heure,  
+        'dates': dates_heure,
+        'period' : "Today"  
     }
     if(request.method == "POST"):
         redirect('add_glucose')  
      
     return render(request , 'statistics/glycemi_statistcs.html', context)
 
+def debug_redirect_uri(request):
+    callback_url = request.build_absolute_uri(reverse('google_login'))
+    return HttpResponse(f"Callback URL should be: {callback_url}")
+
+def Analyse_Result(request):
+    
+    
+    end_date = now().date()  
+    start_date = end_date - timedelta(days=1) 
+    
+    mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__date=now().date() - timedelta(days=1)   
+    ).order_by('-date_mesure')
+    
+    mesures_data = [  
+        {  
+            'valeur': mesure.valeur,  
+            'date': mesure.date_mesure.strftime('%d/%m/%Y'),  
+            'heure': mesure.date_mesure.strftime('%H:%M'),
+            'Date_heure' : f"{mesure.date_mesure.strftime('%d/%m')} {mesure.date_mesure.strftime('%H:%M')}"
+        }  
+        for mesure in mesures  
+    ]  
+    
+    valeurs = [mesure['valeur'] for mesure in mesures_data]
+    dates = [mesure['date'] for mesure in mesures_data]
+    dates_heure = [mesure['Date_heure'] for mesure in mesures_data]
+    
+    # Passer les données au contexte
+    context = {  
+        'valeurs': valeurs,  
+        'dates': dates_heure,
+        'period' : "Yesterday"  
+    }
+    if(request.method == "POST"):
+        redirect('add_glucose')   
+     
+    return render(request , 'statistics/glycemi_statistcs.html', context)    
+
+def get_data(request):
+    mesures = ()
+    period_description = ""
+    referer = request.META.get('HTTP_REFERER', '')
+    path = urlparse(referer).path 
+    url_name = path.strip('/').split('/')[-1]  
+    if url_name == 'glucose_last_week':
+        period_description = "des 7 derniers jours"
+        start_date = timezone.now() - timedelta(days=7) 
+        mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__range=[start_date, now().date()]  
+        ).order_by('-date_mesure')
+    elif url_name == 'glucose_last_30day':
+        period_description = "des 30 derniers jours"
+        start_date = timezone.now() - timedelta(days=30)       
+        mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__range=[start_date, now().date()] 
+        ).order_by('-date_mesure')
+        
+    elif url_name == 'glucose_last_90day':
+        
+        period_description = "des 90 derniers jours"
+        
+        start_date = timezone.now() - timedelta(days=90)
+        mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__range=[start_date, now().date()] 
+        ).order_by('-date_mesure')      
+        
+    elif url_name == 'glucose_Yesterday':
+        
+        period_description = "d'hier"
+        mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__date=timezone.now().date() - timedelta(days=1)   
+        ).order_by('-date_mesure')
+        
+    elif url_name == 'glucose_Today':
+        period_description = "d'aujourd'hui"
+        mesures = MesureGlycemie.objects.filter(  
+        user=request.user,  
+        date_mesure__date=timezone.now().date()  
+        ).order_by('-date_mesure')
+
+    data_list = [
+        f"- {m.date_mesure}: {m.valeur} mg/dL"
+        for m in mesures
+    ]
+    mesures_formatter = "\n".join(data_list)    
+    
+
+    prompte = f"""
+    Vous êtes un assistant médical spécialisé dans l'analyse des données de glycémie pour les patients diabétiques. Agissez comme un endocrinologue ou un expert en diabète.
+
+    Voici les données de mesure de glycémie d'un patient pour la période {period_description }:
+    ```
+    {mesures_formatter}
+    ```
+
+    **Tâche :**
+    1.  **Analysez ces données :** Identifiez les tendances générales (stabilité, variabilité), les périodes de valeurs potentiellement élevées (hyperglycémie) ou basses (hypoglycémie). Notez les schémas éventuels (par exemple, valeurs hautes après les repas si cette information était disponible, ou à certains moments de la journée).
+    2.  **Fournissez des points clés :** Résumez les observations importantes de votre analyse.
+    3.  **Donnez des conseils pratiques :** Basé sur l'analyse, proposez des conseils généraux et concrets que le patient pourrait discuter avec son médecin pour améliorer sa gestion glycémique (par exemple, suggestions sur l'alimentation, l'activité physique, la régularité des mesures, l'importance de noter le contexte des mesures si possible).
+    4.  **Ton et Précautions :** Adoptez un ton professionnel, empathique et encourageant. Soulignez impérativement que cette analyse est basée uniquement sur les données fournies, qu'elle ne remplace PAS un avis médical professionnel et que le patient DOIT consulter son médecin ou son équipe soignante pour toute décision concernant son traitement ou sa santé.
+
+    **Format de réponse attendu :**
+    *   Une section "Analyse des données".
+    *   Une section "Points clés".
+    *   Une section "Conseils généraux".
+    *   Un paragraphe de mise en garde final.
+    *   donner directement l'analyse
+    *   Utiliser des émoji
+    """
+
+    try:
+           
+            model = genai.GenerativeModel('gemini-2.0-flash')
+            response = model.generate_content(prompte).text
+            html_response = markdown.markdown(response)
+           
+            return JsonResponse({ 'response': html_response})
+    except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)    
 
 
     
