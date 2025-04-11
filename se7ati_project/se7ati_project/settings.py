@@ -97,3 +97,7 @@ STATICFILES_DIRS = [
 
 
 GEMINI_API_KEY = "AIzaSyBdZXB2Xy0Vlr36lTt2JkAC4ikZ28NwbME"
+
+# BigBlueButton Settings
+BBB_URL = os.environ.get('BBB_URL', 'https://your-bbb-server.com/bigbluebutton/')
+BBB_SECRET = os.environ.get('BBB_SECRET', 'your-secret-key')

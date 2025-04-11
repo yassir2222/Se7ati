@@ -25,6 +25,8 @@ from django.utils import timezone
 import pandas as pd
 import numpy as np
 import markdown
+import hashlib
+import time
 
 def home(request):
     return render(request,'index.html')
@@ -505,7 +507,7 @@ def chat_bot(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     chat_history = ChatMessage.objects.filter(user=request.user).order_by('created_at')
-    return render(request, 'chat_bot/chat_main.html', {'chat_history': chat_history})
+    return render(request, 'chat_bot/chat_with_user.html', {'chat_history': chat_history})
 
 def glucoseLevel(request):
     
@@ -831,5 +833,52 @@ def get_data(request):
     except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)    
 
+def video_call(request):
+    return render(request, 'video_call.html')
+
+def join_bigbluebutton(request):
+    if request.method == 'GET':
+        meeting_id = request.GET.get('meetingID')
+        user_name = request.GET.get('userName')
+        
+        if not meeting_id or not user_name:
+            return redirect('video_call')
+        
+        # BigBlueButton API credentials (you'll need to set these in settings.py)
+        bbb_url = getattr(settings, 'BBB_URL', 'https://your-bbb-server.com/bigbluebutton/')
+        bbb_secret = getattr(settings, 'BBB_SECRET', 'your-secret-key')
+        
+        # Create meeting if it doesn't exist
+        create_meeting_url = f"{bbb_url}api/create"
+        params = {
+            'name': 'Se7ati Video Call',
+            'meetingID': meeting_id,
+            'attendeePW': 'ap',
+            'moderatorPW': 'mp',
+            'checksum': hashlib.sha1(f"create{meeting_id}Se7ati Video Callmpap{bbb_secret}".encode()).hexdigest()
+        }
+        
+        response = requests.get(create_meeting_url, params=params)
+        
+        # Generate join URL
+        join_url = f"{bbb_url}api/join"
+        params = {
+            'fullName': user_name,
+            'meetingID': meeting_id,
+            'password': 'ap',  # attendee password
+            'checksum': hashlib.sha1(f"join{meeting_id}{user_name}ap{bbb_secret}".encode()).hexdigest()
+        }
+        
+        join_response = requests.get(join_url, params=params)
+        
+        if join_response.status_code == 200:
+            # Redirect to the meeting
+            return redirect(join_response.url)
+        else:
+            return render(request, 'video_call.html', {
+                'error': 'Failed to join the meeting. Please try again.'
+            })
+    
+    return redirect('video_call')
 
     

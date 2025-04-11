@@ -27,4 +27,6 @@ urlpatterns = [
     path('glucose_Today/glucose_Today', views.glucose_Today, name='glucose_Today'),
     path('test', views.debug_redirect_uri, name='debug_redirect_uri'),
     path('glucoseLevel/get-analysis/', views.get_data, name='get_analysis'),
+    path('video-call/', views.video_call, name='video_call'),
+    
 ]
