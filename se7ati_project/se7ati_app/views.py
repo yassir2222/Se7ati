@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from .forms import PatientSignUpForm , DoctorSignUpForm, LoginForm
-from .models import Patient, Doctor, User ,Ville,Quartier,ChatMessage,MesureGlycemie
+from .models import Patient, Doctor, User ,Ville,Quartier,ChatMessage,MesureGlycemie,Room,Message
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render , get_object_or_404
 import requests
@@ -25,6 +25,8 @@ from django.utils import timezone
 import pandas as pd
 import numpy as np
 import markdown
+import uuid
+from django.http import Http404
 
 def home(request):
     return render(request,'index.html')
@@ -832,4 +834,87 @@ def get_data(request):
             return JsonResponse({'error': str(e)}, status=500)    
 
 
+def search_doctor(request):
+    return render(request , 'search/search_doctor.html')
+
+def chat_patient(request):
+    return render(request , 'chat_doctor_patient/chat_patient.html')
+
+def chat_doctor(request):
+    return render(request , 'chat_doctor_patient/chat_doctor.html')
+
+def room(request): 
+        
+        doctor = get_object_or_404(User, username='DRyassir')
+        existing_room = Room.objects.filter(patient_room=request.user, doctor_room=doctor).first()
+
+        if existing_room:
+            room = existing_room
+            print(f"Found existing room: {existing_room}")
+        else:
+
+            new_room_name_uuid = uuid.uuid4()
+            target_room_name = str(new_room_name_uuid)
+            print(f"Creating new room: {target_room_name}")
+            room = Room.objects.create(
+                name=target_room_name, 
+                patient_room=request.user,
+                doctor_room=doctor
+            )        
+        context = {
+            'room_details': room,
+            'username': request.user.username,
+        }
+        return render(request, 'chat_doctor_patient/chat_patient.html', context)
+
+
+
+def send_message(request):
+    print("#######################################################3")
+    message_text = request.POST.get('message', '').strip() 
+    room_id = request.POST.get('room_id')        
+
+    if not message_text:
+        return JsonResponse({'status': 'error', 'message': 'Message text cannot be empty.'}, status=400)
+    if not room_id:
+        return JsonResponse({'status': 'error', 'message': 'Room ID is missing.'}, status=400)
+
+    user = request.user 
+
+    try:
+        room = get_object_or_404(Room, pk=room_id)
+
+        if user != room.patient_room and user != room.doctor_room:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'You are not authorized to send messages in this room.'
+            }, status=403) 
+
+
+        new_message = Message.objects.create(
+            user=user,
+            room=room,
+            value=message_text
+        )
+
+        print(f"Message saved: ID={new_message.id}, User='{user.username}', Room='{room.name}'")
+
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Message sent successfully.',
+            'message_id': new_message.id, 
+            'username': user.username,    
+            'timestamp': new_message.date.isoformat() 
+            })
+
+    except Room.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Room not found.'}, status=404) 
+    except Exception as e:
+
+        print(f"Error in send_message view: {e}")
+        return JsonResponse({'status': 'error', 'message': 'An internal server error occurred.'}, status=500)
     
+def get_maessage(request , room):
+    room_details = Room.objects.get(name=room)
+    messages = Message.objects.filter(room = room_details.id).order_by('date')
+    return JsonResponse({'message': list(messages.values())}) 

@@ -151,6 +151,19 @@
       </li>
       <li>
         <a
+          href="{% url 'search_doctor' %}"
+          class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group"
+        >
+        <svg class="w-6 h-6  text-gray-500 transition duration-75 group-hover:text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+        </svg>
+        
+        
+          <span class="ms-3">Search Doctor</span>
+        </a>
+      </li>
+      <li>
+        <a
           href="#"
           class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group"
         >
@@ -166,6 +179,29 @@
             />
           </svg>
           <span class="flex-1 ms-3 whitespace-nowrap">Sign Up</span>
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="{% url 'room' %}"
+          class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group"
+        >
+          <svg
+            class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              d="M10 0C4.486 0 0 4.486 0 10s4.486 10 10 10 10-4.486 10-10S15.514 0 10 0zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"
+            />
+            <path
+              d="M10 4C7.794 4 6 5.794 6 8s1.794 4 4 4 4-1.794 4-4-1.794-4-4-4zm0 6c-1.103 0-2-.897-2-2s.897-2 2-2 2 .897 2 2-.897 2-2 2z"
+            />
+          </svg>
+          <span class="ms-3">Chat Patient</span>
         </a>
       </li>
     </ul>

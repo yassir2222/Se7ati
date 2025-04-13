@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('/doctor', views.Dr_home, name='Dr_home'),
+    path('doctor', views.Dr_home, name='Dr_home'),
     path('register/doctor/', views.doctor_register, name='doctor_register'),
     path('register/patient/', views.patient_register, name='patient_register'),
     path('login/', views.login_view, name='login'),
@@ -27,4 +27,11 @@ urlpatterns = [
     path('glucose_Today/glucose_Today', views.glucose_Today, name='glucose_Today'),
     path('test', views.debug_redirect_uri, name='debug_redirect_uri'),
     path('glucoseLevel/get-analysis/', views.get_data, name='get_analysis'),
+    path('searchDoctor/', views.search_doctor, name='search_doctor'),
+ 
+    path('chat_doctor/', views.chat_doctor, name='chat_doctor'),
+    path('chat_patient/',views.room,name = "room"),
+    path('chat_patient/send/', views.send_message , name = "send_message"),
+    path('getMessages/<str:room>/', views.get_maessage , name = "get_message")
+ 
 ]

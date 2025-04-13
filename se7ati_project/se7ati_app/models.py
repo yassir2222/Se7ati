@@ -68,3 +68,14 @@ class MesureGlycemie (models.Model):
     
     def __str__(self):  
         return f"Suivi Glycémie : {self.valeur} mmol/L le {self.date_mesure.strftime('%d-%m-%Y %H:%M')}"  
+    
+class Room(models.Model):
+    name = models.CharField(max_length=2000)
+    patient_room = models.ForeignKey(User, on_delete=models.CASCADE,related_name='rooms_as_patient', null=True, blank=True )
+    doctor_room = models.ForeignKey(User, on_delete=models.CASCADE,related_name='rooms_as_doctor', null=True, blank=True)
+    
+class Message(models.Model):
+    value = models.CharField(max_length=1000000)
+    date = models.DateTimeField(default=datetime.now , blank= True) 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, blank=True)       
