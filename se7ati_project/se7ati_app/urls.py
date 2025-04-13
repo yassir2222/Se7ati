@@ -32,6 +32,8 @@ urlpatterns = [
     path('chat_doctor/', views.chat_doctor, name='chat_doctor'),
     path('chat_patient/',views.room,name = "room"),
     path('chat_patient/send/', views.send_message , name = "send_message"),
-    path('getMessages/<str:room>/', views.get_maessage , name = "get_message")
+    path('getMessages/<str:room>/', views.get_maessage , name = "get_message"),
  
+    path('video-call/', views.video_call, name='video_call'),
+    
 ]

@@ -25,6 +25,8 @@ from django.utils import timezone
 import pandas as pd
 import numpy as np
 import markdown
+import hashlib
+import time
 import uuid
 from django.http import Http404
 
@@ -507,7 +509,7 @@ def chat_bot(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     chat_history = ChatMessage.objects.filter(user=request.user).order_by('created_at')
-    return render(request, 'chat_bot/chat_main.html', {'chat_history': chat_history})
+    return render(request, 'chat_bot/chat_with_user.html', {'chat_history': chat_history})
 
 def glucoseLevel(request):
     
@@ -833,6 +835,53 @@ def get_data(request):
     except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)    
 
+def video_call(request):
+    return render(request, 'video_call.html')
+
+def join_bigbluebutton(request):
+    if request.method == 'GET':
+        meeting_id = request.GET.get('meetingID')
+        user_name = request.GET.get('userName')
+        
+        if not meeting_id or not user_name:
+            return redirect('video_call')
+        
+        # BigBlueButton API credentials (you'll need to set these in settings.py)
+        bbb_url = getattr(settings, 'BBB_URL', 'https://your-bbb-server.com/bigbluebutton/')
+        bbb_secret = getattr(settings, 'BBB_SECRET', 'your-secret-key')
+        
+        # Create meeting if it doesn't exist
+        create_meeting_url = f"{bbb_url}api/create"
+        params = {
+            'name': 'Se7ati Video Call',
+            'meetingID': meeting_id,
+            'attendeePW': 'ap',
+            'moderatorPW': 'mp',
+            'checksum': hashlib.sha1(f"create{meeting_id}Se7ati Video Callmpap{bbb_secret}".encode()).hexdigest()
+        }
+        
+        response = requests.get(create_meeting_url, params=params)
+        
+        # Generate join URL
+        join_url = f"{bbb_url}api/join"
+        params = {
+            'fullName': user_name,
+            'meetingID': meeting_id,
+            'password': 'ap',  # attendee password
+            'checksum': hashlib.sha1(f"join{meeting_id}{user_name}ap{bbb_secret}".encode()).hexdigest()
+        }
+        
+        join_response = requests.get(join_url, params=params)
+        
+        if join_response.status_code == 200:
+            # Redirect to the meeting
+            return redirect(join_response.url)
+        else:
+            return render(request, 'video_call.html', {
+                'error': 'Failed to join the meeting. Please try again.'
+            })
+    
+    return redirect('video_call')
 
 def search_doctor(request):
     return render(request , 'search/search_doctor.html')
@@ -844,27 +893,20 @@ def chat_doctor(request):
     return render(request , 'chat_doctor_patient/chat_doctor.html')
 
 def room(request): 
-        
-        doctor = get_object_or_404(User, username='DRyassir')
-        existing_room = Room.objects.filter(patient_room=request.user, doctor_room=doctor).first()
-
-        if existing_room:
-            room = existing_room
-            print(f"Found existing room: {existing_room}")
+        if request.user.user_type == 'patient':    
+            existing_rooms =  Room.objects.filter(patient_room=request.user)      
+            context = {
+                
+                'rooms': existing_rooms,
+                'user_type': "patient"
+            }
         else:
-
-            new_room_name_uuid = uuid.uuid4()
-            target_room_name = str(new_room_name_uuid)
-            print(f"Creating new room: {target_room_name}")
-            room = Room.objects.create(
-                name=target_room_name, 
-                patient_room=request.user,
-                doctor_room=doctor
-            )        
-        context = {
-            'room_details': room,
-            'username': request.user.username,
-        }
+            existing_rooms =  Room.objects.filter(doctor_room=request.user)      
+            context = {
+                
+                'rooms': existing_rooms,
+                 'user_type': "Doctor"
+            }
         return render(request, 'chat_doctor_patient/chat_patient.html', context)
 
 

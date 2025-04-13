@@ -45,8 +45,15 @@
                     <div class="h-20 w-20 rounded-full border overflow-hidden">
                         <img src="https://via.placeholder.com/150/771796" alt="My Profile" class="h-full w-full" /> <!-- Replace with actual user image -->
                     </div>
-                    <div class="text-sm font-semibold mt-2 text-gray-800">Your Name</div> <!-- Replace with actual user name -->
-                    <div class="text-xs text-gray-500">Patient</div>
+                    {% if user.is_authenticated %}
+                    <div class="text-sm font-semibold mt-2 text-gray-800">{{user.username}}</div> 
+                    <div class="text-xs text-gray-500">{{user_type}}</div>
+              {% else %}
+              <div class="text-sm font-semibold mt-2 text-gray-800">{{user.username}}</div> 
+              <div class="text-sm font-semibold mt-2 text-gray-800">username</div> 
+              <div class="text-xs text-gray-500">type</div>
+              {% endif %}
+                    
                 </div>
 
                 <!-- Active Conversations -->
@@ -56,22 +63,21 @@
                         <span class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full text-gray-700 font-medium">3</span> <!-- Example count -->
                     </div>
                     <div class="flex flex-col space-y-1 mt-4 -mx-2 h-full overflow-y-auto pr-2">
-                        <!-- Active Chat Item -->
-                        <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2 bg-blue-100 border-l-4 border-blue-500">
-                            <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">D</div> <!-- Initials or Avatar -->
-                            <div class="ml-2 text-sm font-semibold text-gray-800">Dr. Aisha Khan</div>
-                        </button>
-                        <!-- Inactive Chat Item -->
-                        <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
-                            <div class="flex items-center justify-center h-8 w-8 bg-gray-200 rounded-full">S</div>
-                            <div class="ml-2 text-sm font-semibold text-gray-700">Support Group</div>
-                            <span class="flex items-center justify-center ml-auto text-xs text-white bg-red-500 h-4 w-4 rounded leading-none">2</span> <!-- New Message Count -->
-                        </button>
+                        
                          <!-- Inactive Chat Item -->
-                        <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
-                            <div class="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full">N</div>
-                            <div class="ml-2 text-sm font-semibold text-gray-700">Nutritionist Ali</div>
-                        </button>
+                        {% for room in rooms %}
+                        
+                            <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2" onclick="getMessagesRoom(this)" id="{{room.name}}" >
+                                <div class="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full">DR</div>
+                                {% if user_type == 'patient' %}
+                                <div class="ml-2 text-sm font-semibold text-gray-700" id="DrName">{{room.doctor_room}}</div>
+                                {%else%}
+                                <div class="ml-2 text-sm font-semibold text-gray-700" id="DrName">{{room.patient_room}}</div>
+                                {%endif%}
+                                <div class="ml-2 mt text-sm  text-gray-400 invisible " id="RoomID" >{{room.id}}</div>
+                            </button>
+                       
+                        {% endfor %}
                         <!-- Add more conversation buttons here -->
                     </div>
                 </div>
@@ -89,8 +95,8 @@
                              </div>
                             <div class="flex flex-col leading-tight">
                                 <div class="text-lg mt-1 flex items-center">
-                                    <span class="text-gray-700 mr-3 font-semibold">{{room_details.doctor_room }}</span>
-                                    <span class="text-gray-700 mr-3 font-semibold color">{{room_details.id}}</span>
+                                    <span class="text-gray-700 mr-3 font-semibold" id = "Dr_name"></span>
+                                    <span class="text-gray-700 mr-3 font-semibold color" id = "room_id2"> </span>
                                 </div>
                                
                                 <span class="text-sm text-green-500">Online</span> <!-- Or 'Offline', 'Last seen...' -->
@@ -112,7 +118,7 @@
                     </div>
 
                     <!-- Message History -->
-                    <div id="messages" class="flex flex-col space-y-4 p-3 overflow-y-auto flex-grow scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+                    <div id="display" class="flex flex-col space-y-4 p-3 overflow-y-auto flex-grow scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
 
                         <!-- Received Message Example -->
                         <div class="chat-message">
@@ -171,8 +177,7 @@
     {% csrf_token %}
     <div class="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
         <div class="relative flex">
-            <input type="hidden" name="username" id="username" value="{{username}}"/>
-            <input type="hidden" name="room_id" id="room_id" value="{{room_details.id}}"/>
+            <input type="hidden" name="room_id" id="room_id"/>
             <!-- Attach Button -->
              <span class="absolute left-0 top-0 bottom-0 flex items-center pl-2">
                 <button type="button" class="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-200 ease-in-out text-gray-500 hover:bg-gray-100 focus:outline-none">
@@ -187,12 +192,14 @@
 
              <!-- Send Button -->
             <div class="absolute right-0 top-0 bottom-0 flex items-center pr-2">
+                
                 <button type="submit" class="inline-flex items-center justify-center rounded-lg px-4 py-2 transition duration-200 ease-in-out text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1">
                     <span class="font-semibold hidden sm:inline">Send</span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5 ml-0 sm:ml-1 transform rotate-45">
                         <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                     </svg>
                 </button>
+            
             </div>
         </div>
     </div> 
@@ -285,87 +292,107 @@
 
 
 <script>
+    function getMessagesRoom(buttonElement){
         $(document).ready(function(){
-          var display = $("#display");
-          // Get the URL dynamically using Django's url tag
-          var getMessagesUrl = "{% url 'get_message' room_name=room_details.name %}"; // <-- Use url tag
-  
-          setInterval(function(){
-              $.ajax({
-                  type: 'GET',
-                  url : getMessagesUrl, // <--- Use the generated URL variable
-                  success: function(response){
-                      console.log("Received messages:", response); // Log the response
-                      if (response && response.messages) { // Check if response and messages exist
-                          var isAtBottom = display.scrollTop() + display.innerHeight() >= display[0].scrollHeight - 10; // Add tolerance
-                          $("#display").empty(); // Clear previous messages
-  
-                          // Determine current user's username for styling
-                          var currentUsername = "{{ request.user.username }}"; // Get current user from Django
-  
-                          for (var key in response.messages)
-                          {
-                              var messageData = response.messages[key];
-                              var rawDate = new Date(messageData.date); // Date is already ISO format
-                              var formattedDate = rawDate.toLocaleString('fr-FR', { /*day: 'numeric', month: 'short', year: 'numeric',*/ hour: '2-digit', minute:'2-digit'}); // Simpler format
-  
-                              // Add classes for styling based on sender
-                              var messageClass = 'message-container '; // Base class
-                              var bubbleClass = 'message-bubble ';
-                              var alignmentClass = 'items-start'; // Default: received (left)
-                              var bubbleBgColor = 'bg-gray-200 text-gray-800'; // Received bubble
-                              var roundedCorner = 'rounded-bl-none'; // Received bubble corner
-  
-                              if (messageData.user === currentUsername) {
-                                  // Message sent by the current user
-                                  alignmentClass = 'items-end justify-end'; // Sent (right)
-                                  bubbleBgColor = 'bg-blue-500 text-white'; // Sent bubble
-                                  roundedCorner = 'rounded-br-none'; // Sent bubble corner
-                                  messageClass += ' sent'; // Add specific class if needed
-                              } else {
-                                  messageClass += ' received'; // Add specific class if needed
-                              }
-  
-                              // Build message HTML using Tailwind concepts (adjust classes as needed)
-                              var temp =`
-                                  <div class="flex ${alignmentClass} ${messageClass}">
-                                      <div class="flex flex-col space-y-1 text-sm max-w-xs mx-2 ${messageData.user === currentUsername ? 'order-1 items-end' : 'order-2 items-start'}">
-                                          <div>
-                                              <span class="px-3 py-2 rounded-lg inline-block ${roundedCorner} ${bubbleBgColor} ${bubbleClass}">
-                                                  ${messageData.value}
-                                              </span>
-                                          </div>
-                                          <span class="text-xs text-gray-500 leading-none">${messageData.user} - ${formattedDate}</span>
+           console.log(buttonElement)
+            var display = $("#display");
+            // Get the URL dynamically using Django's url tag
+            var name_room = buttonElement.id;
+            console.log("name room"+name_room)
+            //var getMessagesUrl = "{% url 'get_message' room='ce8e047a-14f8-4dcd-9d78-8a1321268c27' %}"  
+            var getMessagesUrl = "/se7ati/getMessages/" +name_room+ "/";
+            var allDivs = buttonElement.querySelectorAll('div');
+            if (allDivs.length > 1) {
+                doctorName = allDivs[1].textContent.trim();
+            }
+            document.getElementById('Dr_name').innerHTML = doctorName
+            document.getElementById('room_id').value = document.getElementById('RoomID').textContent.trim()
+            
+            setInterval(function(){
+                $.ajax({
+                    type: 'GET',
+                    url : getMessagesUrl, // <--- Use the generated URL variable
+                    success: function(response){
+                        console.log("Received messages:", response); // Log the response
+                        console.log(response.message)
+                        if (response && response.message) { 
+                          
+                            var isAtBottom = display.scrollTop() + display.innerHeight() >= display[0].scrollHeight - 10; // Add tolerance
+                            $("#display").empty(); // Clear previous messages
+                            
+                            // Determine current user's username for styling
+                            var currentUsername = "{{ request.user.id }}"; // Get current user from Django
+                           
+                            for (var key in response.message)
+                            {
+                              
+                                var messageData = response.message[key];
+                                var rawDate = new Date(messageData.date); // Date is already ISO format
+                                var formattedDate = rawDate.toLocaleString('fr-FR', { /*day: 'numeric', month: 'short', year: 'numeric',*/ hour: '2-digit', minute:'2-digit'}); // Simpler format
+    
+                                // Add classes for styling based on sender
+                                  let items = ""
+                                  let bg_color = ""
+                                  let time_color = ""
+                                  let sent = ""
+                                  console.log(`messageData.user_id = ${messageData.user_id}  currentUsername = ${currentUsername}`)
+                                if (messageData.user_id == currentUsername) {
+                                    items = "order-1 items-end "
+                                    bg_color = "bg-blue-500 text-white"
+                                    time_color = "text-blue-200"
+                                    sent = "bg-blue-500 text-white font-bold order-2"
+                                    temp1 = "justify-end"
+                                }else{
+                                     items = "order-2 items-start"
+                                     bg_color = "bg-gray-200 text-gray-700"
+                                     time_color = "text-gray-500"
+                                     sent = "bg-indigo-500 text-white font-bold order-1"
+                                     temp1=""
+                                } 
+    
+                                // Build message HTML using Tailwind concepts (adjust classes as needed)
+                                var temp =`
+                                   <div class="chat-message">
+                              <div class="flex items-end ${temp1}">
+                                  <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 ${items}">
+                                      <div>
+                                          <span class="px-4 py-2 rounded-lg inline-block rounded-bl-none ${bg_color} shadow-sm">
+                                             ${messageData.value}
+                                          </span>
                                       </div>
-                                      <!-- Optional Avatar Placeholder
-                                      <div class="w-6 h-6 rounded-full ${messageData.user === currentUsername ? 'order-2 bg-blue-500' : 'order-1 bg-pink-500'} text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
-                                          ${messageData.user.charAt(0).toUpperCase()}
-                                      </div>
-                                      -->
-                                  </div>`;
-  
-                              $("#display").append(temp);
-                          }
-  
-                          // Scroll logic
-                          if (isAtBottom) {
-                              // Use setTimeout to ensure DOM is updated before scrolling
-                              setTimeout(function() {
-                                  display.scrollTop(display[0].scrollHeight);
-                              }, 0);
-                          }
-                      } else {
-                          console.error("Invalid response format received:", response);
-                      }
-                  },
-                  error: function(jqXHR, textStatus, errorThrown){
-                      console.error("AJAX Error fetching messages:", textStatus, errorThrown);
-                      // Optionally display an error message to the user in the chat window
-                      // $("#display").append("<div class='text-red-500 text-center text-sm'>Error loading messages.</div>");
-                  }
-              });
-          }, 1500); // Increased interval slightly
-      });
-      </script> 
+                                      <span class="text-xs ${time_color} leading-none">${formattedDate}</span>
+                                  </div>
+                                  <div class="flex items-center justify-center h-8 w-8 rounded-full ${sent} flex-shrink-0">D</div>
+                              </div>
+                          </div>
+                                  `
+                             
+                                $("#display").append(temp);
+                            }
+    
+                            // Scroll logic
+                            if (isAtBottom) {
+                                // Use setTimeout to ensure DOM is updated before scrolling
+                                setTimeout(function() {
+                                    display.scrollTop(display[0].scrollHeight);
+                                }, 0);
+                            }
+                        } else {
+                            console.error("Invalid response format received:", response);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown){
+                        console.error("AJAX Error fetching messages:", textStatus, errorThrown);
+                        // Optionally display an error message to the user in the chat window
+                        // $("#display").append("<div class='text-red-500 text-center text-sm'>Error loading messages.</div>");
+                    }
+                });
+            }, 3000); // Increased interval slightly
+        });
+          
+    }
+
+        
+      </script>  
 </body>
 </html>
