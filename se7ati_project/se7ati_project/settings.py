@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Django settings for se7ati_project project.
 
@@ -39,6 +40,30 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+=======
+import os
+from pathlib import Path
+
+# Try to import dotenv - install with pip if needed
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+AUTH_USER_MODEL = 'se7ati_app.User'
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-temporary-key-for-development')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# Application definition
+>>>>>>> df65bc42646209401f820253ff6c76c734627aed
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -46,8 +71,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+<<<<<<< HEAD
     "se7ati_app",
     
+=======
+    "django.contrib.sites",  # Required for allauth
+    "se7ati_app",
+
+>>>>>>> df65bc42646209401f820253ff6c76c734627aed
 ]
 
 MIDDLEWARE = [
@@ -80,6 +111,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "se7ati_project.wsgi.application"
 
+<<<<<<< HEAD
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -131,11 +163,41 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+=======
+# Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'shiha',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST':'localhost',
+        'PORT':'3306',
+    }
+}
+
+# Password validation
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+# Internationalization
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "UTC"
+USE_I18N = True
+USE_TZ = True
+
+# Static files (CSS, JavaScript, Images)
+>>>>>>> df65bc42646209401f820253ff6c76c734627aed
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "se7ati_app/static",
 ]
+<<<<<<< HEAD
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -144,3 +206,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # GetStream Chat Configuration
 STREAM_API_KEY = 'f8mbckcwm85e' 
 STREAM_API_SECRET = 'grxq3m36ypg3h7fmfq3xbyeaw2gp9d6tqux74ctrxmg4enegdzp42g8wpt3d2dmx'  
+=======
+
+
+GEMINI_API_KEY = "AIzaSyBdZXB2Xy0Vlr36lTt2JkAC4ikZ28NwbME"
+
+# BigBlueButton Settings
+BBB_URL = os.environ.get('BBB_URL', 'https://your-bbb-server.com/bigbluebutton/')
+BBB_SECRET = os.environ.get('BBB_SECRET', 'your-secret-key')
+>>>>>>> df65bc42646209401f820253ff6c76c734627aed

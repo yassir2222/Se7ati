@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from se7ati_app.models import Ville, Quartier
+=======
+from se7ati_app.models import Ville, Quartier,MesureGlycemie
+>>>>>>> df65bc42646209401f820253ff6c76c734627aed
 
 try:
     casablanca = Ville.objects.get(nom="Casablanca")
@@ -81,4 +85,38 @@ if quartiers_a_creer:
 else:
     print("Tous les quartiers existent déjà pour Marrakech.")
 
+<<<<<<< HEAD
 print("Opération terminée.")
+=======
+print("Opération terminée.")
+
+
+
+
+from datetime import datetime
+from se7ati_app.models import MesureGlycemie
+from django.contrib.auth.models import User
+
+# Exemple de données pour les mesures de glycémie (10 valeurs en mg/dL sur la semaine dernière)
+donnees = [
+    {'valeur': 102, 'date_mesure': datetime(2025, 3, 19, 8, 0)},  # 19 mars à 08:00
+    {'valeur': 203, 'date_mesure': datetime(2025, 3, 19, 14, 30)}, # 19 mars à 14:30
+    {'valeur': 150, 'date_mesure': datetime(2025, 3, 20, 9, 0)},  # 20 mars à 09:00
+    {'valeur': 170, 'date_mesure': datetime(2025, 3, 20, 16, 15)}, # 20 mars à 16:15
+    {'valeur': 130, 'date_mesure': datetime(2025, 3, 21, 7, 45)},  # 21 mars à 07:45
+    {'valeur': 185, 'date_mesure': datetime(2025, 3, 21, 13, 0)},  # 21 mars à 13:00
+    {'valeur': 115, 'date_mesure': datetime(2025, 3, 22, 10, 30)}, # 22 mars à 10:30
+    {'valeur': 145, 'date_mesure': datetime(2025, 3, 22, 19, 45)}, # 22 mars à 19:45
+    {'valeur': 120, 'date_mesure': datetime(2025, 3, 23, 8, 15)},  # 23 mars à 08:15
+    {'valeur': 160, 'date_mesure': datetime(2025, 3, 23, 18, 0)},  # 23 mars à 18:00
+]
+utilisateur = User.objects.first() 
+
+# Insérer ces données dans la base de données
+for donnee in donnees:
+    MesureGlycemie.objects.create(
+        user= utilisateur,  # Assure-toi de spécifier un utilisateur valide
+        valeur=donnee['valeur'],
+        date_mesure=donnee['date_mesure']
+    )
+>>>>>>> df65bc42646209401f820253ff6c76c734627aed

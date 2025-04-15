@@ -1,7 +1,12 @@
 from django.db import models
+<<<<<<< HEAD
 
 # Create your models here.
 from django.db import models
+=======
+from datetime import datetime
+
+>>>>>>> df65bc42646209401f820253ff6c76c734627aed
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser): 
@@ -59,4 +64,28 @@ class ChatMessage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+<<<<<<< HEAD
         return f"Chat by {self.user.username} at {self.created_at}" 
+=======
+        return f"Chat by {self.user.username} at {self.created_at}" 
+    
+    
+class MesureGlycemie (models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    valeur = models.FloatField()
+    date_mesure  = models.DateTimeField(default=datetime.now)
+    
+    def __str__(self):  
+        return f"Suivi Glycémie : {self.valeur} mmol/L le {self.date_mesure.strftime('%d-%m-%Y %H:%M')}"  
+    
+class Room(models.Model):
+    name = models.CharField(max_length=2000)
+    patient_room = models.ForeignKey(User, on_delete=models.CASCADE,related_name='rooms_as_patient', null=True, blank=True )
+    doctor_room = models.ForeignKey(User, on_delete=models.CASCADE,related_name='rooms_as_doctor', null=True, blank=True)
+    
+class Message(models.Model):
+    value = models.CharField(max_length=1000000)
+    date = models.DateTimeField(default=datetime.now , blank= True) 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, blank=True)       
+>>>>>>> df65bc42646209401f820253ff6c76c734627aed
