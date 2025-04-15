@@ -37,13 +37,17 @@
                 <!-- Logo/Header -->
                 <div class="flex flex-row items-center justify-center h-12 w-full">
                     
-                    <div class="ml-2 font-bold text-xl text-indigo-700 w-20"><a  href="{% url 'home' %}"> <img src="{% static 'images/logo.png' %}"> </a></div>
+                    <div class="ml-2 font-bold text-xl text-indigo-700 w-20">
+                        {% if user_type == 'doctor' %} <a  href="{% url 'Dr_home' %}"> <img src="{% static 'images/logo.png' %}"> </a>
+                        {% else %}<a  href="{% url 'home' %}"> <img src="{% static 'images/logo.png' %}"> </a>
+                        {% endif %}
+                        </div>
                 </div>
 
                 <!-- User Profile (Optional) -->
                 <div class="flex flex-col items-center bg-indigo-100 border border-gray-200 mt-4 w-full py-6 px-4 rounded-lg">
                     <div class="h-20 w-20 rounded-full border overflow-hidden">
-                        <img src="https://via.placeholder.com/150/771796" alt="My Profile" class="h-full w-full" /> <!-- Replace with actual user image -->
+                        <img src="{% static 'images/user.png' %}" alt="My Profile" class="h-full w-full" /> <!-- Replace with actual user image -->
                     </div>
                     {% if user.is_authenticated %}
                     <div class="text-sm font-semibold mt-2 text-gray-800">{{user.username}}</div> 
@@ -68,7 +72,7 @@
                         {% for room in rooms %}
                         
                             <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2" onclick="getMessagesRoom(this)" id="{{room.name}}" >
-                                <div class="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full">DR</div>
+                                <div class="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full" id="list_icon">DR</div>
                                 {% if user_type == 'patient' %}
                                 <div class="ml-2 text-sm font-semibold text-gray-700" id="DrName">{{room.doctor_room}}</div>
                                 {%else%}
@@ -120,53 +124,17 @@
                     <!-- Message History -->
                     <div id="display" class="flex flex-col space-y-4 p-3 overflow-y-auto flex-grow scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
 
-                        <!-- Received Message Example -->
-                        <div class="chat-message">
-                            <div class="flex items-end">
-                                <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-2 items-start">
-                                    <div>
-                                        <span class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-200 text-gray-700 shadow-sm">
-                                            Hello! How have your blood sugar levels been this morning? Remember to take your readings before breakfast.
-                                        </span>
-                                    </div>
-                                    <span class="text-xs text-gray-500 leading-none">10:30 AM</span>
-                                </div>
-                                <div class="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 text-white font-bold order-1 flex-shrink-0">D</div>
-                            </div>
-                        </div>
+                   
 
                         <!-- Sent Message Example -->
-                        <div class="chat-message">
-                            <div class="flex items-end justify-end">
-                                <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-1 items-end">
-                                    <div>
-                                        <span class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-500 text-white shadow-sm">
-                                            Good morning, Dr. Aisha. Levels were 110 mg/dL this morning before breakfast. Feeling good today!
-                                        </span>
-                                     </div>
-                                    <span class="text-xs text-blue-200 leading-none">10:32 AM</span>
-                                </div>
-                                <div class="flex items-center justify-center h-8 w-8 rounded-full bg-blue-500 text-white font-bold order-2 flex-shrink-0">Y</div> <!-- Placeholder for 'You' -->
-                            </div>
-                        </div>
+                        
 
                          <!-- Sent File Message Example -->
                          <div class="chat-message">
                             <div class="flex items-end justify-end">
                                 <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-1 items-end">
-                                    <div>
-                                        <span class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-500 text-white shadow-sm">
-                                            <a href="/path/to/your/blood_sugar_log.pdf" target="_blank" class="flex items-center underline hover:text-blue-100">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1 flex-shrink-0">
-                                                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                                </svg>
-                                                blood_sugar_log.pdf
-                                            </a>
-                                        </span>
-                                     </div>
-                                    <span class="text-xs text-blue-200 leading-none">10:35 AM</span>
+                                   
                                 </div>
-                                <div class="flex items-center justify-center h-8 w-8 rounded-full bg-blue-500 text-white font-bold order-2 flex-shrink-0">Y</div> <!-- Placeholder for 'You' -->
                             </div>
                         </div>
 
@@ -318,19 +286,19 @@
                         if (response && response.message) { 
                           
                             var isAtBottom = display.scrollTop() + display.innerHeight() >= display[0].scrollHeight - 10; // Add tolerance
-                            $("#display").empty(); // Clear previous messages
+                            $("#display").empty(); 
                             
-                            // Determine current user's username for styling
-                            var currentUsername = "{{ request.user.id }}"; // Get current user from Django
+                            
+                            var currentUsername = "{{ request.user.id }}"; 
+                            var first_letter_username = "{{ request.user.username }}"
                            
                             for (var key in response.message)
                             {
-                              
+                               
                                 var messageData = response.message[key];
-                                var rawDate = new Date(messageData.date); // Date is already ISO format
+                                var rawDate = new Date(messageData.date); 
                                 var formattedDate = rawDate.toLocaleString('fr-FR', { /*day: 'numeric', month: 'short', year: 'numeric',*/ hour: '2-digit', minute:'2-digit'}); // Simpler format
     
-                                // Add classes for styling based on sender
                                   let items = ""
                                   let bg_color = ""
                                   let time_color = ""
@@ -342,12 +310,15 @@
                                     time_color = "text-blue-200"
                                     sent = "bg-blue-500 text-white font-bold order-2"
                                     temp1 = "justify-end"
+                                    icon = first_letter_username[0]
                                 }else{
                                      items = "order-2 items-start"
                                      bg_color = "bg-gray-200 text-gray-700"
                                      time_color = "text-gray-500"
                                      sent = "bg-indigo-500 text-white font-bold order-1"
                                      temp1=""
+                                     icon = "Dr"
+
                                 } 
     
                                 // Build message HTML using Tailwind concepts (adjust classes as needed)
@@ -362,7 +333,7 @@
                                       </div>
                                       <span class="text-xs ${time_color} leading-none">${formattedDate}</span>
                                   </div>
-                                  <div class="flex items-center justify-center h-8 w-8 rounded-full ${sent} flex-shrink-0">D</div>
+                                  <div class="flex items-center justify-center h-8 w-8 rounded-full ${sent} flex-shrink-0">${icon}</div>
                               </div>
                           </div>
                                   `
