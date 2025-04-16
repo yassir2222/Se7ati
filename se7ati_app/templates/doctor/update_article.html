@@ -1,0 +1,45 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Se7ati</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+   
+</head>
+<body class="bg-gray-100">
+    {% include 'includes/navbarD.html' %}
+    <br><br>
+    <div class="flex min-h-screen">
+        <div class="flex-1 ml-64">
+            <div class="p-4">
+                <div class="container mx-auto p-6">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Update Article</h1>
+                
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <form method="post" class="space-y-4">
+                          {% csrf_token %}
+                            <div>
+                              <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                              <input type="text" name="title" id="title" value="{{ article.title }}" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                              <label for="content" class="block text-sm font-medium text-gray-700">Content</label>
+                              <textarea name="content" id="content" required rows="5" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">{{ article.content }}</textarea>
+                            </div>
+                            <div>
+                                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
+                                    Update Article
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html> 

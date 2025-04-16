@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Se7ati{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-100">
+    {% include 'includes/navbarD.html' %}
+    <div class="flex min-h-screen">
+       
+        <div class="flex-1 ml-10">
+            <div class="p-4">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

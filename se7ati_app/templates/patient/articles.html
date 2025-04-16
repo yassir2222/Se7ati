@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Articles</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
+        {% for article in articles %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ article.title }}</h2>
+                <p class="text-gray-700">{{ article.content|truncatewords:30 }}</p>
+            </div>
+            <div class="bg-gray-50 px-6 py-3 text-sm text-gray-500 flex justify-between items-center">
+                <span>
+                    By: <span class="text-gray-700 font-medium">{{ article.doctor.get_full_name }}</span>
+                </span>
+                <span>
+                    Created: <span class="text-gray-700 font-medium">{{ article.created_at|date:"F d, Y" }}</span>
+                </span>
+            </div>
+        </div>
+
+        {% empty %}
+        <p class="text-gray-500">No articles available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
