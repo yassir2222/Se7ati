@@ -8,12 +8,9 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-gray-100">
+    {% include 'includes/navbarD.html' %}
     <div class="flex min-h-screen">
-        <div class="w-64 fixed h-full">
-            {% include 'includes/navbar.html' %}
-            {% include 'includes/sidebar.html' %}
-        </div>
-        <div class="flex-1 ml-64">
+        <div class="flex-1 ml-10">
             <div class="p-4">
                 {% block content %}{% endblock %}
             </div>
