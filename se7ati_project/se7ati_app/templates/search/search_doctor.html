@@ -1,0 +1,228 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trouver un Docteur - Tailwind v4</title>
+    <!-- !! IMPORTANT !! -->
+    <!-- Utilisation du Play CDN Tailwind v4 UNIQUEMENT pour la DÉMO. -->
+    <!-- Les projets réels v4 nécessitent une ÉTAPE DE BUILD (Vite, Next.js, etc.) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <!-- Configuration optionnelle v4 (pour Play CDN) -->
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              // Extensions de thème possibles ici
+            }
+          }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        /* Styles de base ou composants personnalisés */
+        body {
+            @apply bg-gray-100 font-sans antialiased;
+        }
+        /* Optionnel : scrollbars personnalisées */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { @apply bg-gray-100 rounded-lg; }
+        ::-webkit-scrollbar-thumb { @apply bg-gray-300 rounded-lg; }
+        ::-webkit-scrollbar-thumb:hover { @apply bg-gray-400; }
+    </style>
+</head>
+<body>
+
+    {% include 'includes/navbar.html' %}
+<br><br>
+    <!-- Section Principale -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Section de Recherche et Filtres -->
+        <section class="bg-gradient-to-r from-cyan-50 to-blue-100 p-6 md:p-8 rounded-lg shadow-md mb-8">
+            <h1 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 text-center md:text-left">Trouvez le bon docteur pour vous</h1>
+            <form action="#" method="GET">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                    <!-- Filtre Spécialité -->
+                    <div>
+                        <label for="specialty" class="block text-sm font-medium text-gray-700 mb-1">Spécialité</label>
+                        <select id="specialty" name="specialty" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 sm:text-sm">
+                            <option value="">Toutes spécialités</option>
+                            <option value="generaliste">Médecine Générale</option>
+                            <option value="cardiologie">Cardiologie</option>
+                            <option value="dermatologie">Dermatologie</option>
+                            <option value="pediatrie">Pédiatrie</option>
+                            <option value="ophtalmologie">Ophtalmologie</option>
+                            <!-- Ajouter d'autres spécialités -->
+                        </select>
+                    </div>
+
+                    <!-- Filtre Lieu -->
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Lieu (Ville, CP)</label>
+                        <input type="text" name="location" id="location" placeholder="Ex: Paris, 75001" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 sm:text-sm">
+                    </div>
+
+                    <!-- Filtre Nom (Optionnel) -->
+                     <div>
+                        <label for="doctor_name" class="block text-sm font-medium text-gray-700 mb-1">Nom du docteur (Optionnel)</label>
+                        <input type="text" name="doctor_name" id="doctor_name" placeholder="Ex: Dr. Martin" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 sm:text-sm">
+                    </div>
+
+                    <!-- Bouton Rechercher -->
+                    <div class="mt-4 sm:mt-0">
+                        <button type="submit" class="w-full inline-flex items-center justify-center px-6 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 transition duration-200">
+                            <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            Rechercher
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Section Résultats -->
+        <section>
+            <h2 class="text-xl font-semibold text-gray-800 mb-6">Docteurs disponibles (Résultats fictifs)</h2>
+
+            <!-- Grille des cartes docteur -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Carte Docteur 1 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col transition transform hover:scale-[1.02] duration-300 ease-in-out">
+                    <div class="flex items-center p-4 border-b border-gray-200">
+                         <img class="h-16 w-16 rounded-full object-cover mr-4" src="https://via.placeholder.com/100/77aadd/ffffff?text=DC" alt="Photo Dr. Dubois">
+                         <div>
+                            <h3 class="text-lg font-bold text-gray-900">Dr. Claire Dubois</h3>
+                            <p class="text-sm font-medium text-cyan-700">Cardiologue</p>
+                         </div>
+                    </div>
+                    <div class="p-4 flex-grow">
+                         <div class="flex items-center text-sm text-gray-600 mb-2">
+                             <!-- Location Icon -->
+                             <svg class="w-4 h-4 mr-1.5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span>12 Rue de la Paix, 75002 Paris</span>
+                         </div>
+                         <div class="flex items-center text-sm text-gray-600 mb-3">
+                             <!-- Language Icon -->
+                             <svg class="w-4 h-4 mr-1.5 text-gray-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 2a1 1 0 011.707-.707l7 7a1 1 0 010 1.414l-7 7A1 1 0 017 18V2zm4 7a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path><path d="M10.75 4.75a.75.75 0 00-1.5 0v10.5a.75.75 0 001.5 0V4.75z"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-7-8a7 7 0 1114 0 7 7 0 01-14 0z" clip-rule="evenodd"></path></svg> <!-- Placeholder language/info icon -->
+                             <span>Français, Anglais</span>
+                         </div>
+                         <p class="text-sm text-gray-500 line-clamp-2">Expertise en hypertension et maladies coronariennes. Plus de 15 ans d'expérience.</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 border-t border-gray-200">
+                        <a href="#" class="w-full inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
+                            Voir le Profil / RDV
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Carte Docteur 2 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col transition transform hover:scale-[1.02] duration-300 ease-in-out">
+                     <div class="flex items-center p-4 border-b border-gray-200">
+                         <img class="h-16 w-16 rounded-full object-cover mr-4" src="https://via.placeholder.com/100/66cc99/ffffff?text=LM" alt="Photo Dr. Leroux">
+                         <div>
+                            <h3 class="text-lg font-bold text-gray-900">Dr. Marc Leroux</h3>
+                            <p class="text-sm font-medium text-cyan-700">Médecin Généraliste</p>
+                         </div>
+                    </div>
+                     <div class="p-4 flex-grow">
+                         <div class="flex items-center text-sm text-gray-600 mb-2">
+                             <!-- Location Icon -->
+                             <svg class="w-4 h-4 mr-1.5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span>5 Avenue Foch, 69006 Lyon</span>
+                         </div>
+                         <div class="flex items-center text-sm text-gray-600 mb-3">
+                             <!-- Clock Icon -->
+                             <svg class="w-4 h-4 mr-1.5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                             <span>Accepte de nouveaux patients</span>
+                         </div>
+                         <p class="text-sm text-gray-500 line-clamp-2">Médecine générale pour adultes et enfants. Suivi préventif et consultations.</p>
+                    </div>
+                     <div class="p-4 bg-gray-50 border-t border-gray-200">
+                        <a href="#" class="w-full inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
+                             Voir le Profil / RDV
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Carte Docteur 3 (Exemple Dermatologue) -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col transition transform hover:scale-[1.02] duration-300 ease-in-out">
+                     <div class="flex items-center p-4 border-b border-gray-200">
+                         <img class="h-16 w-16 rounded-full object-cover mr-4" src="https://via.placeholder.com/100/ffcc80/333333?text=AP" alt="Photo Dr. Petit">
+                         <div>
+                            <h3 class="text-lg font-bold text-gray-900">Dr. Aline Petit</h3>
+                            <p class="text-sm font-medium text-cyan-700">Dermatologue</p>
+                         </div>
+                    </div>
+                    <div class="p-4 flex-grow">
+                        <div class="flex items-center text-sm text-gray-600 mb-2">
+                             <!-- Location Icon -->
+                             <svg class="w-4 h-4 mr-1.5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span>25 Rue Nationale, 59000 Lille</span>
+                         </div>
+                          <div class="flex items-center text-sm text-gray-600 mb-3">
+                             <!-- Check Icon -->
+                             <svg class="w-4 h-4 mr-1.5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                             <span>Conventionné Secteur 1</span>
+                         </div>
+                         <p class="text-sm text-gray-500 line-clamp-2">Spécialisée en dermatologie médicale et esthétique. Traitement acné, eczéma, suivi des grains de beauté.</p>
+                    </div>
+                     <div class="p-4 bg-gray-50 border-t border-gray-200">
+                         <a href="#" class="w-full inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
+                             Voir le Profil / RDV
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Ajouter d'autres cartes docteur si nécessaire -->
+
+            </div>
+
+            <!-- Pagination (Exemple Simple) -->
+            <div class="mt-10 flex justify-center">
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Précédent</span>
+                        <!-- Heroicon name: solid/chevron-left -->
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <!-- Current: "z-10 bg-cyan-50 border-cyan-500 text-cyan-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" -->
+                    <a href="#" aria-current="page" class="z-10 bg-cyan-50 border-cyan-500 text-cyan-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium"> 1 </a>
+                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"> 2 </a>
+                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium"> 3 </a>
+                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700"> ... </span>
+                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium"> 8 </a>
+                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Suivant</span>
+                        <!-- Heroicon name: solid/chevron-right -->
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-6 mt-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            © 2024 SantéConnect. Tous droits réservés.
+            <div class="mt-2">
+                <a href="#" class="hover:text-gray-300 mx-2">Conditions d'utilisation</a> |
+                <a href="#" class="hover:text-gray-300 mx-2">Politique de confidentialité</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script (pour interactions futures si besoin) -->
+    <script>
+        // Possibles interactions JS ici (ex: autocomplétion lieu, filtres dynamiques...)
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+name,address,district,phone,localisation,duty
+<<<<<<< HEAD
+pharmacie-oxygene,PISTE 1032 N° 1 BIS - LES CRETES - BD. PANORAMIQUE,Ain Chock,0522.52.07.74,https://www.google.com/maps?q=casablanca PISTE 1032 N° 1 BIS - LES CRETES - BD. PANORAMIQUE ,Garde du Jour De 09h A 22h sans Interruption
+pharmacie-al-mostakbal,"63, BOULEVARD ERFOUD LOTISSEMENT EL MOSTAQBAL II - EL INARA AIN CHOCK",Ain Chock,0522.21.99.76,"https://www.google.com/maps?q=casablanca 63, BOULEVARD ERFOUD LOTISSEMENT EL MOSTAQBAL II - EL INARA AIN CHOCK ",Garde du Jour De 09h A 22h sans Interruption
+pharmacie-al-azhar,"133, BD. TAZA (PRES DU MARCHE MUNICIPAL) HAY MOULAY ABDELLAH - AIN CHOCK",Ain Chock,0522.21.59.66,"https://www.google.com/maps?q=casablanca 133, BD. TAZA (PRES DU MARCHE MUNICIPAL) HAY MOULAY ABDELLAH - AIN CHOCK ",Garde du Jour De 09h A 22h sans Interruption
+=======
+ph-daoudiat,Av. Allal El Fassi (entre Hôtel Majorelle et Boulangerie Alfa 2000),DAOUDIAT,0524-30-74-35,"https://www.google.com/maps?saddr=My+Location&daddr=31.643072,-8.000249",Garde du Jour De 09h A 22h sans Interruption
+ph-hôpital-mohamed-vi,"169, Lot. Boumassmar CHU Mohammed VI Cité de L’Hôpital Errazi Amerchich -Sakar-",DAOUDIAT,0524-29-00-02,"https://www.google.com/maps?saddr=My+Location&daddr=31.665766,-7.995059",Garde du Jour De 09h A 22h sans Interruption
+ph-al-imam-malek,"Sur Av.  Allal Fassi, à côté du Centre d’immatriculation des voitures «services des Mines» et la BMCE",DAOUDIAT,0524-31-15-95,"https://www.google.com/maps?saddr=My+Location&daddr=31.659638,-8.006242",Garde du Jour De 09h A 22h sans Interruption
+>>>>>>> df65bc42646209401f820253ff6c76c734627aed

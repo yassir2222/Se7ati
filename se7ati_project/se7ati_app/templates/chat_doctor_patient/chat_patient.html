@@ -1,0 +1,369 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sehaty Chat - Diabetes Support</title>
+    <!-- Link to your compiled Tailwind CSS file or use the CDN for testing -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <style>
+        /* Optional: Custom scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* slate-300 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; /* slate-400 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="flex h-screen antialiased text-gray-800">
+        <div class="flex flex-row h-full w-full overflow-x-hidden">
+
+            <!-- Sidebar -->
+            <div class="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0 border-r border-gray-200">
+                <!-- Logo/Header -->
+                <div class="flex flex-row items-center justify-center h-12 w-full">
+                    
+                    <div class="ml-2 font-bold text-xl text-indigo-700 w-20">
+                        {% if user_type == 'doctor' %} <a  href="{% url 'Dr_home' %}"> <img src="{% static 'images/logo.png' %}"> </a>
+                        {% else %}<a  href="{% url 'home' %}"> <img src="{% static 'images/logo.png' %}"> </a>
+                        {% endif %}
+                        </div>
+                </div>
+
+                <!-- User Profile (Optional) -->
+                <div class="flex flex-col items-center bg-indigo-100 border border-gray-200 mt-4 w-full py-6 px-4 rounded-lg">
+                    <div class="h-20 w-20 rounded-full border overflow-hidden">
+                        <img src="{% static 'images/user.png' %}" alt="My Profile" class="h-full w-full" /> <!-- Replace with actual user image -->
+                    </div>
+                    {% if user.is_authenticated %}
+                    <div class="text-sm font-semibold mt-2 text-gray-800">{{user.username}}</div> 
+                    <div class="text-xs text-gray-500">{{user_type}}</div>
+              {% else %}
+              <div class="text-sm font-semibold mt-2 text-gray-800">{{user.username}}</div> 
+              <div class="text-sm font-semibold mt-2 text-gray-800">username</div> 
+              <div class="text-xs text-gray-500">type</div>
+              {% endif %}
+                    
+                </div>
+
+                <!-- Active Conversations -->
+                <div class="flex flex-col mt-8">
+                    <div class="flex flex-row items-center justify-between text-xs">
+                        <span class="font-semibold text-gray-600">Active Conversations</span>
+                        <span class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full text-gray-700 font-medium">3</span> <!-- Example count -->
+                    </div>
+                    <div class="flex flex-col space-y-1 mt-4 -mx-2 h-full overflow-y-auto pr-2">
+                        
+                         <!-- Inactive Chat Item -->
+                        {% for room in rooms %}
+                        
+                            <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2" onclick="getMessagesRoom(this)" id="{{room.name}}" >
+                                <div class="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full" id="list_icon">DR</div>
+                                {% if user_type == 'patient' %}
+                                <div class="ml-2 text-sm font-semibold text-gray-700" id="DrName">{{room.doctor_room}}</div>
+                                {%else%}
+                                <div class="ml-2 text-sm font-semibold text-gray-700" id="DrName">{{room.patient_room}}</div>
+                                {%endif%}
+                                <div class="ml-2 mt text-sm  text-gray-400 invisible " id="RoomID" >{{room.id}}</div>
+                            </button>
+                       
+                        {% endfor %}
+                        <!-- Add more conversation buttons here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="flex flex-col flex-auto h-full p-0 md:p-6">
+                <div class="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-white h-full p-4 shadow-lg">
+
+                    <!-- Chat Header -->
+                    <div class="flex items-center justify-between py-3 border-b-2 border-gray-200">
+                        <div class="flex items-center space-x-4">
+                             <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 text-white font-bold flex-shrink-0">
+                                D <!-- Placeholder for Dr. Aisha Khan -->
+                             </div>
+                            <div class="flex flex-col leading-tight">
+                                <div class="text-lg mt-1 flex items-center">
+                                    <span class="text-gray-700 mr-3 font-semibold" id = "Dr_name"></span>
+                                    <span class="text-gray-700 mr-3 font-semibold color" id = "room_id2"> </span>
+                                </div>
+                               
+                                <span class="text-sm text-green-500">Online</span> <!-- Or 'Offline', 'Last seen...' -->
+                            </div>
+                        </div>
+                         <!-- Header Actions (Optional) -->
+                        <div class="flex items-center space-x-2">
+                            <button type="button" class="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-200 ease-in-out text-gray-500 hover:bg-gray-100 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                                </svg>
+                            </button>
+                            <button type="button" class="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-200 ease-in-out text-gray-500 hover:bg-gray-100 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Message History -->
+                    <div id="display" class="flex flex-col space-y-4 p-3 overflow-y-auto flex-grow scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+
+                   
+
+                        <!-- Sent Message Example -->
+                        
+
+                         <!-- Sent File Message Example -->
+                         <div class="chat-message">
+                            <div class="flex items-end justify-end">
+                                <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-1 items-end">
+                                   
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add more message blocks here -->
+
+                    </div>
+<form id="post-form" methode = "POST">
+    {% csrf_token %}
+    <div class="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
+        <div class="relative flex">
+            <input type="hidden" name="room_id" id="room_id"/>
+            <!-- Attach Button -->
+             <span class="absolute left-0 top-0 bottom-0 flex items-center pl-2">
+                <button type="button" class="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-200 ease-in-out text-gray-500 hover:bg-gray-100 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-gray-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.122 2.122l7.81-7.81"/>
+                    </svg>
+                </button>
+            </span>
+
+            <!-- Text Input -->
+            <input type="text" id="message" placeholder="Write your message!" class="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-400 pl-12 bg-gray-100 border border-gray-200 rounded-lg py-3 focus:ring-2 focus:ring-blue-300 focus:border-transparent" />
+
+             <!-- Send Button -->
+            <div class="absolute right-0 top-0 bottom-0 flex items-center pr-2">
+                
+                <button type="submit" class="inline-flex items-center justify-center rounded-lg px-4 py-2 transition duration-200 ease-in-out text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1">
+                    <span class="font-semibold hidden sm:inline">Send</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5 ml-0 sm:ml-1 transform rotate-45">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                </button>
+            
+            </div>
+        </div>
+    </div> 
+
+</form>
+                    <!-- Input Area -->
+                    <!-- End Input Area -->
+
+                </div> <!-- End Chat Area Container -->
+            </div> <!-- End Main Chat Area -->
+
+        </div> <!-- End Flex Row -->
+    </div> <!-- End Screen Container -->
+    <script type="text/javascript">
+        // Ensure jQuery is loaded before this script runs
+        $(document).ready(function() { // Optional: Wrap in document ready
+    
+            $(document).on('submit', '#post-form', function(e) {
+                e.preventDefault(); // Prevent default page reload
+    
+                var messageValue = $('#message').val().trim();
+                var roomIdValue = $('#room_id').val(); 
+                var csrfTokenValue = $('input[name=csrfmiddlewaretoken]').val();
+
+                if (!messageValue) {
+                    alert('Please enter a message.');
+                    return;
+                }
+                if (!roomIdValue) {
+                    alert('Error: Room ID is missing. Cannot send message.');
+                    console.error("Room ID input (#room_id) is missing or empty.");
+                    return;
+                }
+                 if (!csrfTokenValue) {
+                    alert('Error: Security token is missing. Cannot send message.');
+                    console.error("CSRF token input is missing.");
+                    return;
+                }
+    
+                console.log("Sending message:", messageValue, "to room ID:", roomIdValue); 
+    
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'send_message' %}", 
+                    data: {
+                        room_id: roomIdValue,
+                        message: messageValue,
+                        csrfmiddlewaretoken: csrfTokenValue,
+                    },
+                    dataType: 'json', 
+                    success: function(data) {
+
+                        console.log("Server Success Response:", data);
+    
+
+                        if (data.status === 'success') {
+
+                            console.log("Success:", data.message);
+
+                            $('#message').val('');
+                        } else {
+
+                            console.error("Server reported error:", data.message);
+                            alert("Error: " + data.message);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+ 
+                        console.error("AJAX Error:", textStatus, errorThrown);
+                        console.error("Response Text:", jqXHR.responseText);
+    
+                        let errorMsg = "Failed to send message. ";
+                        if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                             errorMsg += jqXHR.responseJSON.message; 
+                        } else if (jqXHR.status === 403) {
+                            errorMsg += "Authorization failed (check login/CSRF).";
+                        } else if (jqXHR.status === 404) {
+                            errorMsg += "Chat room not found.";
+                        } else {
+                            errorMsg += "Please check your connection or try again later.";
+                        }
+                         alert(errorMsg);
+   
+                    }
+                });
+            });
+    
+        });
+    </script>
+
+
+<script>
+    function getMessagesRoom(buttonElement){
+        $(document).ready(function(){
+           console.log(buttonElement)
+            var display = $("#display");
+            // Get the URL dynamically using Django's url tag
+            var name_room = buttonElement.id;
+            console.log("name room"+name_room)
+            //var getMessagesUrl = "{% url 'get_message' room='ce8e047a-14f8-4dcd-9d78-8a1321268c27' %}"  
+            var getMessagesUrl = "/se7ati/getMessages/" +name_room+ "/";
+            var allDivs = buttonElement.querySelectorAll('div');
+            if (allDivs.length > 1) {
+                doctorName = allDivs[1].textContent.trim();
+            }
+            document.getElementById('Dr_name').innerHTML = doctorName
+            document.getElementById('room_id').value = document.getElementById('RoomID').textContent.trim()
+            
+            setInterval(function(){
+                $.ajax({
+                    type: 'GET',
+                    url : getMessagesUrl, // <--- Use the generated URL variable
+                    success: function(response){
+                        console.log("Received messages:", response); // Log the response
+                        console.log(response.message)
+                        if (response && response.message) { 
+                          
+                            var isAtBottom = display.scrollTop() + display.innerHeight() >= display[0].scrollHeight - 10; // Add tolerance
+                            $("#display").empty(); 
+                            
+                            
+                            var currentUsername = "{{ request.user.id }}"; 
+                            var first_letter_username = "{{ request.user.username }}"
+                           
+                            for (var key in response.message)
+                            {
+                               
+                                var messageData = response.message[key];
+                                var rawDate = new Date(messageData.date); 
+                                var formattedDate = rawDate.toLocaleString('fr-FR', { /*day: 'numeric', month: 'short', year: 'numeric',*/ hour: '2-digit', minute:'2-digit'}); // Simpler format
+    
+                                  let items = ""
+                                  let bg_color = ""
+                                  let time_color = ""
+                                  let sent = ""
+                                  console.log(`messageData.user_id = ${messageData.user_id}  currentUsername = ${currentUsername}`)
+                                if (messageData.user_id == currentUsername) {
+                                    items = "order-1 items-end "
+                                    bg_color = "bg-blue-500 text-white"
+                                    time_color = "text-blue-200"
+                                    sent = "bg-blue-500 text-white font-bold order-2"
+                                    temp1 = "justify-end"
+                                    icon = first_letter_username[0]
+                                }else{
+                                     items = "order-2 items-start"
+                                     bg_color = "bg-gray-200 text-gray-700"
+                                     time_color = "text-gray-500"
+                                     sent = "bg-indigo-500 text-white font-bold order-1"
+                                     temp1=""
+                                     icon = "Dr"
+
+                                } 
+    
+                                // Build message HTML using Tailwind concepts (adjust classes as needed)
+                                var temp =`
+                                   <div class="chat-message">
+                              <div class="flex items-end ${temp1}">
+                                  <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 ${items}">
+                                      <div>
+                                          <span class="px-4 py-2 rounded-lg inline-block rounded-bl-none ${bg_color} shadow-sm">
+                                             ${messageData.value}
+                                          </span>
+                                      </div>
+                                      <span class="text-xs ${time_color} leading-none">${formattedDate}</span>
+                                  </div>
+                                  <div class="flex items-center justify-center h-8 w-8 rounded-full ${sent} flex-shrink-0">${icon}</div>
+                              </div>
+                          </div>
+                                  `
+                             
+                                $("#display").append(temp);
+                            }
+    
+                            // Scroll logic
+                            if (isAtBottom) {
+                                // Use setTimeout to ensure DOM is updated before scrolling
+                                setTimeout(function() {
+                                    display.scrollTop(display[0].scrollHeight);
+                                }, 0);
+                            }
+                        } else {
+                            console.error("Invalid response format received:", response);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown){
+                        console.error("AJAX Error fetching messages:", textStatus, errorThrown);
+                        // Optionally display an error message to the user in the chat window
+                        // $("#display").append("<div class='text-red-500 text-center text-sm'>Error loading messages.</div>");
+                    }
+                });
+            }, 3000); // Increased interval slightly
+        });
+          
+    }
+
+        
+      </script>  
+</body>
+</html>
