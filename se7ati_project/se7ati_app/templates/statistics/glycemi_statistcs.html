@@ -1,474 +1,729 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Statistiques Glycémie</title>
-  <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
-  
-
-</head>
-<body class="bg-indigo-50">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Statistiques Glycémie</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .range-slider::-webkit-slider-thumb {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background-color: #4f46e5;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      .range-slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background-color: #4f46e5;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      .input-focus:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
     {% include 'includes/navbar.html' %}
     <div></div>
-    {% include 'includes/sidebar.html' %}
+    {% include 'includes/sidebar.html' %} {% load static %}
 
-    {% load static %}
-    <br><br><br><br>
-    <div class="grid grid-cols-2  gap-2" style="margin-left: 25%;">
-        <form method="post" " >
-          {% csrf_token %}
-        <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-           
-            <div class="p-5">
-                <a href="#">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">🚀 Suivez votre glycémie en un coup d'œil !</h5>
-                </a>
-                <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">📅 Notez chaque mesure et analysez vos tendances facilement</p>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" for="glycemia">
-                        Taux de Glycémie <span class="text-xs text-gray-500">(mg/dL)</span>
-                    </label>
-                    
-                    
-                    <input 
-                        type="number" 
-                        id="glycemia" 
-                        name="glycemia" 
-                        min="50" 
-                        max="300" 
-                        value="100"
-                        required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus focus:outline-none"
-                    />
-                
-                    
-                    <input 
-                        type="range" 
-                        id="glycemia-range" 
-                        name="glycemia" 
-                        min="0" 
-                        max="400" 
-                        step="1" 
-                        value="100"
-                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none range-slider"
-                        
-                    />
-                
-                  
-                    <div class="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>0</span>
-                        <output id="glycemia-value">200</output>
-                        <span>400</span>
-                    </div>
+    <div class="p-4 sm:ml-64 pt-20 md:px-6 lg:px-8">
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">
+          Statistiques de Glycémie
+        </h1>
+        <p class="text-gray-600">
+          Suivez et analysez votre taux de glycémie au fil du temps
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div
+          class="bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
+        >
+          <div class="p-6">
+            <form method="post">
+              {% csrf_token %}
+              <h3
+                class="text-xl font-semibold text-gray-800 mb-4 flex items-center dark:text-white"
+              >
+                <span class="mr-2">🚀</span> Enregistrer une nouvelle mesure
+              </h3>
+              <p class="mb-4 text-gray-600 dark:text-gray-400">
+                Notez chaque mesure pour un meilleur suivi de votre santé
+              </p>
+
+              <div class="mb-4">
+                <label
+                  class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300"
+                  for="glycemia"
+                >
+                  Taux de Glycémie
+                  <span class="text-xs text-gray-500">(mg/dL)</span>
+                </label>
+                <input
+                  type="number"
+                  id="glycemia"
+                  name="glycemia"
+                  min="50"
+                  max="300"
+                  value="100"
+                  required
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg input-focus focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+                <input
+                  type="range"
+                  id="glycemia-range"
+                  name="glycemia"
+                  min="0"
+                  max="400"
+                  step="1"
+                  value="100"
+                  class="w-full h-2 mt-3 bg-gray-200 rounded-lg appearance-none range-slider dark:bg-gray-700"
+                />
+                <div
+                  class="flex justify-between text-xs text-gray-500 mt-1 dark:text-gray-400"
+                >
+                  <span>0</span>
+                  <output id="glycemia-value" class="font-medium">100</output>
+                  <span>400</span>
                 </div>
-              <br>  
+              </div>
 
-              <label class="block text-sm font-medium text-gray-700 mb-1" for="glycemia">
-                Date de Mesure
-            </label>
-<div class="flex">
-   
-    <div class="relative max-w-sm flex items-center me-4">
-        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-        <svg class="w-4 h-4  text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-            </svg>
-        </div>
-        <input id="datepicker-actions" name="date" datepicker datepicker-buttons datepicker-autoselect-today type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
-    </div>
-    <div class="relative flex items-center me-4">
-        <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
-            </svg>
-        </div>
-        <input type="time" id="time" name="time" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  value="00:00" required />
-    </div>
-</div>
-  
-                <br>
-                <button href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-indigo-600 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-
-                   
-                    <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7.757v8.486M7.757 12h8.486M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                      </svg>&ThinSpace; Enregistrer mes données
-                      
-                </button>
-            </div>
-        </div>
-      </form>
-        <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-            <img class="h-auto max-w-full rounded-lg" src="{% static 'images/Diabetes-bro-glycemi.png' %}" alt="">
-        </div>
-        
-        
-    </div>
-    
-<br><br>
-    
-    <div class=" w-1/2 ml-10 bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6" style="margin-left: 24%; width:75% ;" >
-        <div class="flex justify-between mb-5">
-          <div class="grid gap-4 grid-cols-2">
-            <div>
-              <h5 class="inline-flex items-center text-gray-500 dark:text-gray-400 leading-none font-normal mb-2">Glycemia 
-                <svg data-popover-target="clicks-info" data-popover-placement="bottom" class="w-3 h-3 text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                </svg>
-                <div data-popover id="clicks-info" role="tooltip" class="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
-                    <div class="p-3 space-y-2">
-                        <h3 class="font-semibold text-gray-900 dark:text-white">What is Glycemia?
-
-                        </h3>
-                        Glycemia refers to the concentration of glucose (a type of sugar) in your bloodstream. It's more commonly known as your blood sugar level or blood glucose level.      <br>                 <h
-                        <p> <b> Fasting Blood Glucose: </b>
-<br>
-                          mg/dL: 80 to 130 mg/dL
-                          <br>
-                          mmol/L: 4.4 to 7.2 mmol/L
-                          <br>
-                          <b> Post-Prandial Blood Glucose:</b> (1-2 hours after starting a meal)
-                          <br>
-                          mg/dL: Less than 180 mg/dL
-                          <br>
-                          mmol/L: Less than 10.0 mmol/L</p>
-                        <a href="https://www.federationdesdiabetiques.org/information/glycemie" class="flex items-center font-medium text-blue-600 dark:text-blue-500 dark:hover:text-blue-600 hover:text-blue-700 hover:underline">Read more <svg class="w-2 h-2 ms-1.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                  </svg></a>
+              <div class="mb-4">
+                <label
+                  class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300"
+                >
+                  Date et Heure de Mesure
+                </label>
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <div class="relative flex-1">
+                    <div
+                      class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+                    >
+                      <svg
+                        class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"
+                        />
+                      </svg>
                     </div>
-                    <div data-popper-arrow></div>
+                    <input
+                      id="datepicker-actions"
+                      name="date"
+                      datepicker
+                      datepicker-buttons
+                      datepicker-autoselect-today
+                      type="text"
+                      class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Sélectionner une date"
+                    />
+                  </div>
+                  <div class="relative flex-1">
+                    <div
+                      class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none"
+                    >
+                      <svg
+                        class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="time"
+                      id="time"
+                      name="time"
+                      class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      value="00:00"
+                      required
+                    />
+                  </div>
                 </div>
-              </h5>
-              <p class="text-gray-900 dark:text-white text-2xl leading-none font-bold">{{ period }}</p>
-            </div>
-            
+              </div>
+
+              <button
+                type="submit"
+                class="w-full px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 transition-all duration-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                <div class="flex items-center justify-center">
+                  <svg
+                    class="w-4 h-4 mr-2"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 7.757v8.486M7.757 12h8.486M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  Enregistrer mes données
+                </div>
+              </button>
+            </form>
           </div>
+        </div>
+
+        <div
+          class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 flex items-center justify-center dark:bg-gray-800 dark:border-gray-700"
+        >
+          <img
+            class="h-auto max-w-full rounded-lg"
+            src="{% static 'images/Diabetes-bro-glycemi.png' %}"
+            alt="Illustration de suivi glycémique"
+          />
+        </div>
+      </div>
+
+      <div
+        class="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-800 p-6 mb-6"
+      >
+        <div
+          class="flex flex-col md:flex-row md:items-center md:justify-between mb-5 gap-4"
+        >
           <div>
-            <button id="dropdownDefaultButton"
-              data-dropdown-toggle="lastDaysdropdown"
-              data-dropdown-placement="bottom" type="button" class="px-3 py-2 inline-flex items-center text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Last week <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-          </svg></button>
-          <div id="lastDaysdropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
-                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-                  <li>
-                    <a href="{% url 'glucose_Yesterday' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Yesterday</a>
-                  </li>
-                  <li>
-                    <a href="{% url 'glucose_Today' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Today</a>
-                  </li>
-                  <li>
-                    <a href="{% url 'glucose_last_week' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last 7 days</a>
-                  </li>
-                  <li>
-                    <a href="{% url 'glucose_last_30day' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last 30 days</a>
-                  </li>
-                  <li>
-                    <a href="{% url 'glucose_last_90day' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last 90 days</a>
-                  </li>
-                </ul>
-            </div>
+            <h3
+              class="inline-flex items-center text-lg font-semibold text-gray-800 mb-1 dark:text-white"
+            >
+              Évolution de la Glycémie
+              <div class="relative ml-2">
+                <svg
+                  data-popover-target="clicks-info"
+                  data-popover-placement="bottom"
+                  class="w-4 h-4 text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M10 .5a9.5 9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"
+                  />
+                </svg>
+                <div
+                  data-popover
+                  id="clicks-info"
+                  role="tooltip"
+                  class="absolute z-10 invisible inline-block text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+                >
+                  <div class="p-3 space-y-2">
+                    <h3 class="font-semibold text-gray-900 dark:text-white">
+                      What is Glycemia?
+                    </h3>
+                    Glycemia refers to the concentration of glucose (a type of
+                    sugar) in your bloodstream. It's more commonly known as your
+                    blood sugar level or blood glucose level.
+                    <p>
+                      <b> Fasting Blood Glucose: </b> <br />mg/dL: 80 to 130
+                      mg/dL <br />mmol/L: 4.4 to 7.2 mmol/L <br /><b>
+                        Post-Prandial Blood Glucose:</b
+                      >
+                      (1-2 hours after starting a meal) <br />mg/dL: Less than
+                      180 mg/dL <br />mmol/L: Less than 10.0 mmol/L
+                    </p>
+                    <a
+                      href="https://www.federationdesdiabetiques.org/information/glycemie"
+                      class="flex items-center font-medium text-blue-600 dark:text-blue-500 dark:hover:text-blue-600 hover:text-blue-700 hover:underline"
+                      >Read more
+                      <svg
+                        class="w-2 h-2 ms-1.5 rtl:rotate-180"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 6 10"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m1 9 4-4-4-4"
+                        />
+                      </svg>
+                    </a>
+                  </div>
+                  <div data-popper-arrow></div>
+                </div>
+              </div>
+            </h3>
+            <p class="text-gray-700 font-semibold dark:text-gray-300">
+              {{ period }}
+            </p>
+          </div>
+
+          <button
+            id="dropdownDefaultButton"
+            data-dropdown-toggle="lastDaysdropdown"
+            data-dropdown-placement="bottom"
+            type="button"
+            class="px-4 py-2.5 text-sm font-medium text-gray-700 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-50 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+          >
+            <span class="flex items-center">
+              <span class="mr-2">Période</span>
+              <svg
+                class="w-2.5 h-2.5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 10 6"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m1 1 4 4 4-4"
+                />
+              </svg>
+            </span>
+          </button>
+          <div
+            id="lastDaysdropdown"
+            class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700"
+          >
+            <ul
+              class="py-2 text-sm text-gray-700 dark:text-gray-200"
+              aria-labelledby="dropdownDefaultButton"
+            >
+              <li>
+                <a
+                  href="{% url 'glucose_Yesterday' %}"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >Yesterday</a
+                >
+              </li>
+              <li>
+                <a
+                  href="{% url 'glucose_Today' %}"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >Today</a
+                >
+              </li>
+              <li>
+                <a
+                  href="{% url 'glucose_last_week' %}"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >Last 7 days</a
+                >
+              </li>
+              <li>
+                <a
+                  href="{% url 'glucose_last_30day' %}"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >Last 30 days</a
+                >
+              </li>
+              <li>
+                <a
+                  href="{% url 'glucose_last_90day' %}"
+                  class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >Last 90 days</a
+                >
+              </li>
+            </ul>
           </div>
         </div>
-        <div id="line-chart"></div>
-        <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between mt-2.5">
-          <div class="pt-5"  style="cursor: pointer;">      
-            <a href="#" onclick="generateGlucosePDF()" style="margin-right:12px"  class="px-5 py-2.5 text-sm font-medium text-white inline-flex items-center bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-              <svg class="w-4 h-4 text-white me-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
-                <path d="M14.066 0H7v5a2 2 0 0 1-2 2H0v11a1.97 1.97 0 0 0 1.934 2h12.132A1.97 1.97 0 0 0 16 18V2a1.97 1.97 0 0 0-1.934-2Zm-3 15H4.828a1 1 0 0 1 0-2h6.238a1 1 0 0 1 0 2Zm0-4H4.828a1 1 0 0 1 0-2h6.238a1 1 0 1 1 0 2Z"/>
-                <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"/>
-              </svg>
-              View full report
-            </a>
+        <div id="line-chart" class="h-80"></div>
+        <div
+          class="flex flex-wrap items-center gap-3 border-gray-200 border-t dark:border-gray-700 pt-5 mt-5"
+        >
+          <a
+            href="#"
+            onclick="generateGlucosePDF()"
+            class="px-4 py-2.5 text-sm font-medium text-white inline-flex items-center bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg transition-colors duration-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            <svg
+              class="w-4 h-4 text-white me-2 rtl:rotate-180"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 16 20"
+            >
+              <path
+                d="M14.066 0H7v5a2 2 0 0 1-2 2H0v11a1.97 1.97 0 0 0 1.934 2h12.132A1.97 1.97 0 0 0 16 18V2a1.97 1.97 0 0 0-1.934-2Zm-3 15H4.828a1 1 0 0 1 0-2h6.238a1 1 0 0 1 0 2Zm0-4H4.828a1 1 0 0 1 0-2h6.238a1 1 0 1 1 0 2Z"
+              />
+              <path
+                d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"
+              />
+            </svg>
+            Télécharger le rapport PDF
+          </a>
 
-          
-            <button data-modal-target="default-modal" data-modal-toggle="default-modal"  class="px-5 py-2.5 text-sm font-medium text-white inline-flex items-center bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-              <svg class="w-4 h-4 text-white me-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18.5A2.493 2.493 0 0 1 7.51 20H7.5a2.468 2.468 0 0 1-2.4-3.154 2.98 2.98 0 0 1-.85-5.274 2.468 2.468 0 0 1 .92-3.182 2.477 2.477 0 0 1 1.876-3.344 2.5 2.5 0 0 1 3.41-1.856A2.5 2.5 0 0 1 12 5.5m0 13v-13m0 13a2.493 2.493 0 0 0 4.49 1.5h.01a2.468 2.468 0 0 0 2.403-3.154 2.98 2.98 0 0 0 .847-5.274 2.468 2.468 0 0 0-.921-3.182 2.477 2.477 0 0 0-1.875-3.344A2.5 2.5 0 0 0 14.5 3 2.5 2.5 0 0 0 12 5.5m-8 5a2.5 2.5 0 0 1 3.48-2.3m-.28 8.551a3 3 0 0 1-2.953-5.185M20 10.5a2.5 2.5 0 0 0-3.481-2.3m.28 8.551a3 3 0 0 0 2.954-5.185"/>
+          <button
+            data-modal-target="default-modal"
+            data-modal-toggle="default-modal"
+            class="px-4 py-2.5 text-sm font-medium text-white inline-flex items-center bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg transition-colors duration-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            <svg
+              class="w-4 h-4 text-white me-2 rtl:rotate-180"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 18.5A2.493 2.493 0 0 1 7.51 20H7.5a2.468 2.468 0 0 1-2.4-3.154 2.98 2.98 0 0 1-.85-5.274 2.468 2.468 0 0 1 .92-3.182 2.477 2.477 0 0 1 1.876-3.344 2.5 2.5 0 0 1 3.41-1.856A2.5 2.5 0 0 1 12 5.5m0 13v-13m0 13a2.493 2.493 0 0 0 4.49 1.5h.01a2.468 2.468 0 0 0 2.403-3.154 2.98 2.98 0 0 0 .847-5.274 2.468 2.468 0 0 0-.921-3.182 2.477 2.477 0 0 0-1.875-3.344A2.5 2.5 0 0 0 14.5 3 2.5 2.5 0 0 0 12 5.5m-8 5a2.5 2.5 0 0 1 3.48-2.3m-.28 8.551a3 3 0 0 1-2.953-5.185M20 10.5a2.5 2.5 0 0 0-3.481-2.3m.28 8.551a3 3 0 0 0 2.954-5.185"
+              />
+            </svg>
+            Analyser mes données
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div
+      id="default-modal"
+      tabindex="-1"
+      aria-hidden="true"
+      class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+    >
+      <div class="relative p-4 w-full max-w-4xl max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
+          <!-- Modal header -->
+          <div
+            class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200"
+          >
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+              Analyse de vos données glycémiques
+            </h3>
+            <button
+              type="button"
+              id="Close"
+              class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+              data-modal-hide="default-modal"
+            >
+              <svg
+                class="w-3 h-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 14"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                />
               </svg>
-              Analyse Result
+              <span class="sr-only">Close modal</span>
             </button>
-            
-            <!-- Main modal -->
-            
+          </div>
+          <!-- Modal body -->
+          <div class="p-4 md:p-5 space-y-4" id="analysis-result">
+            <!-- Content will be loaded here -->
+          </div>
+          <!-- Modal footer -->
+          <div
+            class="flex items-center justify-end p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600"
+          >
+            <button
+              data-modal-hide="default-modal"
+              type="button"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              id="Accept"
+            >
+              J'ai compris
+            </button>
+            <button
+              data-modal-hide="default-modal"
+              type="button"
+              class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+              id="Decline"
+            >
+              Fermer
+            </button>
           </div>
         </div>
       </div>
-      <br><br>
-      <div id="default-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full  max-h-full">
-            <!-- Modal content -->
-            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-                <!-- Modal header -->
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                      View full report
-                    </h3>
-                    <button type="button" id="Close" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span class="sr-only">Close modal</span>
-                    </button>
-                </div>
-                <!-- Modal body -->
-                <div class="p-4 md:p-5 space-y-4" id="analysis-result">
-                    
-                </div>
-                <!-- Modal footer -->
-                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <button data-modal-hide="default-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="Accept">I accept</button>
-                    <button data-modal-hide="default-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" id="Decline">Decline</button>
-                </div>
-            </div>
-        </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-<script>
-    
-
-      const options = {
-    chart: {
-      height: "100%",
-      maxWidth: "100%",
-      type: "line",
-      fontFamily: "Inter, sans-serif",
-      dropShadow: {
-        enabled: false,
-      },
-      toolbar: {
-        show: false,
-      },
-    },
-    tooltip: {
-      enabled: true,
-      x: {
-        show: false,
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: 6,
-    },
-    grid: {
-      show: true,
-      strokeDashArray: 4,
-      padding: {
-        left: 2,
-        right: 2,
-        top: -26
-      },
-    },
-    series: [
-    
-      {
-        name: "Glucose level",
-        data: {{ valeurs|safe }},
-        color: "#7E3AF2",
-      },
-    ],
-    legend: {
-      show: false
-    },
-    stroke: {
-      curve: 'smooth'
-    },
-    xaxis: {
-      categories: {{ dates|safe }},
-      labels: {
-        show: true,
-        style: {
+    <!-- Keep all the original JavaScript without changes -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Keeping the original JavaScript untouched
+        const options = {
+        chart: {
+          height: "100%",
+          maxWidth: "100%",
+          type: "line",
           fontFamily: "Inter, sans-serif",
-          cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
-        }
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    yaxis: {
-      show: false,
-    },
-  }
+          dropShadow: {
+            enabled: false,
+          },
+          toolbar: {
+            show: false,
+          },
+        },
+        tooltip: {
+          enabled: true,
+          x: {
+            show: false,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          width: 6,
+        },
+        grid: {
+          show: true,
+          strokeDashArray: 4,
+          padding: {
+            left: 2,
+            right: 2,
+            top: -26
+          },
+        },
+        series: [
 
-  if (document.getElementById("line-chart") && typeof ApexCharts !== 'undefined') {
-    const chart = new ApexCharts(document.getElementById("line-chart"), options);
-    chart.render();
-  }
-
-
-  function generateGlucosePDF() {
-    // Create a new jsPDF instance
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    // Add title
-    doc.setFontSize(18);
-    doc.text('Se7ati - Rapport de Glycémie', 14, 22);
-    
-  
-    doc.setFontSize(11);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 30);
-    
-
-    const tableColumn = ["Date", "Glycémie (mg/dL)" ,"Statut"];
-    
-    const tableRows = [];
-    const glucoseData = {{ valeurs|safe }};
-    const dates = {{ dates|safe }};
-    for (let i = 0; i < glucoseData.length; i++) {
-      const glucoseValue = glucoseData[i];
-      const date = dates[i] || "---";  
-
-      let status;
-      if (glucoseValue < 70) {
-          status = 'Hypoglycémie';
-      } else if (glucoseValue <= 120) {
-          status = 'Normal';
-      } else if (glucoseValue <= 180) {
-          status = 'Élevé';
-      } else {
-          status = 'Très élevé';
+          {
+            name: "Glucose level",
+            data: {{ valeurs|safe }},
+            color: "#7E3AF2",
+          },
+        ],
+        legend: {
+          show: false
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        xaxis: {
+          categories: {{ dates|safe }},
+          labels: {
+            show: true,
+            style: {
+              fontFamily: "Inter, sans-serif",
+              cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+            }
+          },
+          axisBorder: {
+            show: false,
+          },
+          axisTicks: {
+            show: false,
+          },
+        },
+        yaxis: {
+          show: false,
+        },
       }
-      
-      tableRows.push([date, glucoseValue, status]);
-  }
-    
-    // Generate the table
-    doc.autoTable({
-        head: [tableColumn],
-        body: tableRows,
-        startY: 40,
-        theme: 'grid',
-        styles: {
-            fontSize: 10,
-            cellPadding: 3,
-            lineColor: [44, 62, 80],
-            lineWidth: 0.25
-        },
-        headStyles: {
-            fillColor: [22, 160, 133],
-            textColor: 255,
-            fontStyle: 'bold'
-        },
-        alternateRowStyles: {
-            fillColor: [240, 240, 240]
+
+      if (document.getElementById("line-chart") && typeof ApexCharts !== 'undefined') {
+        const chart = new ApexCharts(document.getElementById("line-chart"), options);
+        chart.render();
+      }
+
+
+      function generateGlucosePDF() {
+        // Create a new jsPDF instance
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Add title
+        doc.setFontSize(18);
+        doc.text('Se7ati - Rapport de Glycémie', 14, 22);
+
+
+        doc.setFontSize(11);
+        doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 30);
+
+
+        const tableColumn = ["Date", "Glycémie (mg/dL)" ,"Statut"];
+
+        const tableRows = [];
+        const glucoseData = {{ valeurs|safe }};
+        const dates = {{ dates|safe }};
+        for (let i = 0; i < glucoseData.length; i++) {
+          const glucoseValue = glucoseData[i];
+          const date = dates[i] || "---";
+
+          let status;
+          if (glucoseValue < 70) {
+              status = 'Hypoglycémie';
+          } else if (glucoseValue <= 120) {
+              status = 'Normal';
+          } else if (glucoseValue <= 180) {
+              status = 'Élevé';
+          } else {
+              status = 'Très élevé';
+          }
+
+          tableRows.push([date, glucoseValue, status]);
+      }
+
+        // Generate the table
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 40,
+            theme: 'grid',
+            styles: {
+                fontSize: 10,
+                cellPadding: 3,
+                lineColor: [44, 62, 80],
+                lineWidth: 0.25
+            },
+            headStyles: {
+                fillColor: [22, 160, 133],
+                textColor: 255,
+                fontStyle: 'bold'
+            },
+            alternateRowStyles: {
+                fillColor: [240, 240, 240]
+            }
+        });
+
+        // Save the PDF
+        doc.save('rapport-glycemie.pdf');
+      }
+    </script>
+
+    <script>
+      const glycemiaInput = document.getElementById("glycemia");
+      const glycemiaRange = document.getElementById("glycemia-range");
+
+      // Synchronisation entre le champ number et le range
+
+      glycemiaRange.addEventListener("input", () => {
+        glycemiaInput.value = glycemiaRange.value;
+        document.getElementById("glycemia-value").textContent =
+          glycemiaRange.value;
+      });
+
+      glycemiaInput.addEventListener("input", () => {
+        if (glycemiaInput.value >= 0 && glycemiaInput.value <= 400) {
+          glycemiaRange.value = glycemiaInput.value;
+          document.getElementById("glycemia-value").textContent =
+            glycemiaInput.value;
         }
-    });
-    
-    // Save the PDF
-    doc.save('rapport-glycemie.pdf');
-  }
-</script>
+      });
 
-<script>
-  const glycemiaInput = document.getElementById('glycemia');
-    const glycemiaRange = document.getElementById('glycemia-range');
+      document.querySelector("form").addEventListener("submit", function (e) {
+        e.preventDefault();
 
+        const dateInput = document.getElementById("datepicker-actions");
+        const timeInput = document.getElementById("time");
+        const glycemiaInput = document.getElementById("glycemia");
 
-    // Synchronisation entre le champ number et le range
-
-
-    glycemiaRange.addEventListener('input', () => {
-      glycemiaInput.value = glycemiaRange.value;
-      
-    });
-
-    document.querySelector('form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const dateInput = document.getElementById('datepicker-actions');
-      const timeInput = document.getElementById('time');
-      const glycemiaInput = document.getElementById('glycemia');
-
-      if (!dateInput.value || !timeInput.value || !glycemiaInput.value) {
-          alert('Please fill in all fields');
+        if (!dateInput.value || !timeInput.value || !glycemiaInput.value) {
+          alert("Please fill in all fields");
           return;
-      }
+        }
 
-      // Create FormData object
-      const formData = new FormData(this);
-      
-      // Submit the form
-      fetch("{% url 'add_glucose' %}", {
-          method: 'POST',
+        // Create FormData object
+        const formData = new FormData(this);
+
+        // Submit the form
+        fetch("{% url 'add_glucose' %}", {
+          method: "POST",
           body: formData,
           headers: {
-              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-          }
-      })
-      .then(response => {
-          if (response.ok) {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
+              .value,
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
               window.location.reload();
-          } else {
-              throw new Error('Something went wrong');
-          }
-      })
-      .catch(error => {
-          console.error('Error:', error);
-          alert('Error saving measurement');
+            } else {
+              throw new Error("Something went wrong");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Error saving measurement");
+          });
       });
-  });
-</script>
+    </script>
 
-<script>
+    <script>
 
-    document.querySelector('[data-modal-toggle="default-modal"]').addEventListener('click', function () {
-        // Afficher un message de chargement
-        document.getElementById('analysis-result').innerHTML = `
-        <div class="flex flex-col items-center justify-center py-6 space-y-2">
-          <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
-          <p class="text-gray-600 text-sm">Analyse en cours...</p>
-        </div>
-      `;       
-        fetch('{% url 'get_analysis' %}')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Réponse réseau non OK');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const resultDiv = document.getElementById('analysis-result');
-                if (data.response) {
-                    resultDiv.innerHTML = data.response;
-                } else {
-                    resultDiv.innerHTML = `<p class="text-red-600">Erreur : ${data.error}</p>`;
-                }
-               
-            })
-            .catch(error => {
-                document.getElementById('analysis-result').innerHTML = `<p class="text-red-600">Erreur lors de la récupération des données: ${error.message}</p>`;
-                console.error('Fetch error:', error);
-            });
-    });
-    document.querySelector('#Accept').addEventListener('click', function () {
-      document.getElementById("default-modal").style.display = "none";
-      document.getElementById("analysis-result").innerHTML = ""; // Clear the content of the analysis result div
-    })
+      document.querySelector('[data-modal-toggle="default-modal"]').addEventListener('click', function () {
+          // Afficher un message de chargement
+          document.getElementById('analysis-result').innerHTML = `
+          <div class="flex flex-col items-center justify-center py-6 space-y-2">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
+            <p class="text-gray-600 text-sm">Analyse en cours...</p>
+          </div>
+        `;
+          fetch('{% url 'get_analysis' %}')
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Réponse réseau non OK');
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  const resultDiv = document.getElementById('analysis-result');
+                  if (data.response) {
+                      resultDiv.innerHTML = data.response;
+                  } else {
+                      resultDiv.innerHTML = `<p class="text-red-600">Erreur : ${data.error}</p>`;
+                  }
 
-    document.querySelector('#Close').addEventListener('click', function () {
-      document.getElementById("default-modal").style.display = "none";
-      document.getElementById("analysis-result").innerHTML = ""; // Clear the content of the analysis result div
-    })
+              })
+              .catch(error => {
+                  document.getElementById('analysis-result').innerHTML = `<p class="text-red-600">Erreur lors de la récupération des données: ${error.message}</p>`;
+                  console.error('Fetch error:', error);
+              });
+      });
+      document.querySelector('#Accept').addEventListener('click', function () {
+        document.getElementById("default-modal").style.display = "none";
+        document.getElementById("analysis-result").innerHTML = ""; // Clear the content of the analysis result div
+      })
 
-    document.querySelector('#Decline').addEventListener('click', function () {
-      document.getElementById("default-modal").style.display = "none";
-      document.getElementById("analysis-result").innerHTML = ""; // Clear the content of the analysis result div
-    })
-  </script>
-  
+      document.querySelector('#Close').addEventListener('click', function () {
+        document.getElementById("default-modal").style.display = "none";
+        document.getElementById("analysis-result").innerHTML = ""; // Clear the content of the analysis result div
+      })
 
-<script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-</body>
+      document.querySelector('#Decline').addEventListener('click', function () {
+        document.getElementById("default-modal").style.display = "none";
+        document.getElementById("analysis-result").innerHTML = ""; // Clear the content of the analysis result div
+      })
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+  </body>
 </html>

@@ -31,7 +31,95 @@ import uuid
 from django.http import Http404
 
 def home(request):
-    return render(request,'index.html')
+    context = {}
+    
+    if request.user.is_authenticated:
+        # Get latest glucose reading
+        latest_glucose = MesureGlycemie.objects.filter(
+            user=request.user
+        ).order_by('-date_mesure').first()
+        
+        if latest_glucose:
+            context['latest_glucose'] = {
+                'level': latest_glucose.valeur,
+                'date': latest_glucose.date_mesure
+            }
+        
+        # Get upcoming appointments count (placeholder - needs appointment model)
+        context['appointments_count'] = 0  # Replace with actual count when available
+        
+        # Get glucose readings for the past 7 days for the chart
+        end_date = now()
+        start_date = end_date - timedelta(days=7)
+        
+        glucose_readings = MesureGlycemie.objects.filter(
+            user=request.user,
+            date_mesure__range=[start_date, end_date]
+        ).order_by('date_mesure')
+        
+        # Prepare data for charts
+        dates = []
+        morning_values = []
+        evening_values = []
+        
+        for reading in glucose_readings:
+            reading_hour = reading.date_mesure.hour
+            reading_date = reading.date_mesure.strftime('%a')  # Day abbreviation (Mon, Tue, etc.)
+            
+            # Simple logic to separate morning vs evening readings
+            if reading_hour < 12:
+                if reading_date not in dates:
+                    dates.append(reading_date)
+                    morning_values.append(reading.valeur)
+                    evening_values.append(None)  # Placeholder
+                else:
+                    idx = dates.index(reading_date)
+                    morning_values[idx] = reading.valeur
+            else:
+                if reading_date not in dates:
+                    dates.append(reading_date)
+                    morning_values.append(None)  # Placeholder
+                    evening_values.append(reading.valeur)
+                else:
+                    idx = dates.index(reading_date)
+                    evening_values[idx] = reading.valeur
+        
+        # Convert None values to JavaScript null for proper chart rendering
+        morning_values = [v if v is not None else 'null' for v in morning_values]
+        evening_values = [v if v is not None else 'null' for v in evening_values]
+        
+        context['chart_data'] = {
+            'dates': dates,
+            'morning_values': morning_values,
+            'evening_values': evening_values
+        }
+        
+        # Risk score (if available from diabetes prediction)
+        # This is a placeholder - you would need to implement the actual risk score calculation
+        try:
+            patient = Patient.objects.get(user=request.user)
+            if patient.date_naissance and patient.genre and patient.taille and patient.poids:
+                # Simplified risk score calculation (just for demonstration)
+                # In a real app, this would be based on actual medical parameters
+                age = timezone.now().year - patient.date_naissance.year
+                
+                if patient.poids and patient.taille:
+                    bmi = patient.poids / ((patient.taille / 100) ** 2)
+                    
+                    # Very simplified risk assessment (NOT medically accurate)
+                    if age > 45 and bmi > 25:
+                        risk_score = min(70, int(age * 0.5 + bmi))
+                    elif age > 35 and bmi > 23:
+                        risk_score = min(40, int(age * 0.3 + bmi))
+                    else:
+                        risk_score = max(10, int(age * 0.1 + bmi))
+                        
+                    context['risk_score'] = risk_score
+        except (Patient.DoesNotExist, Exception) as e:
+            # If patient profile is not complete or calculation fails
+            pass
+    
+    return render(request, 'index.html', context)
 
 def Dr_home(request):
     return render(request,'doctor/dashboard.html')
@@ -958,4 +1046,4 @@ def send_message(request):
 def get_maessage(request , room):
     room_details = Room.objects.get(name=room)
     messages = Message.objects.filter(room = room_details.id).order_by('date')
-    return JsonResponse({'message': list(messages.values())}) 
+    return JsonResponse({'message': list(messages.values())})
