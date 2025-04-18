@@ -1,17 +1,6 @@
 from django.urls import path
 from . import views
 
-<<<<<<< HEAD
-urlpatterns = [
-    path('', views.home, name='home'),
-    path('register/doctor/', views.patient_register, name='register'),
-    path('register/patient/', views.doctor_register, name='register'),
-
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-    path('pharmacy/', views.chercher_pharmacies_view, name='chercher_pharmacies_view'),
-    path('file/', views.serve_csv, name='serve_csv'),
-=======
 
 
 urlpatterns = [
@@ -22,7 +11,6 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('pharmacy/', views.chercher_pharmacies_view, name='chercher_pharmacies_view'),
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
     path('get-quartiers/', views.get_quartiers, name='get_quartiers'),
     path('edit_profile/', views.edit_profile, name='edit_profile'), 
     path('edit_profile/<int:user_id>/update', views.edit_profile_update, name='edit_profile_update'),  # AJAX endpoint for quartiers
@@ -30,11 +18,6 @@ urlpatterns = [
     path('chat/<int:user_id>/', views.chat_with_user, name='chat_with_user'),
     path('diabetes_predicton/', views.diabetes_predicton, name='diabetes_predicton'),
     path('chat_bot/', views.chat_bot, name='chat_bot'),
-<<<<<<< HEAD
-
-
-]
-=======
     path('glucoseLevel/', views.glucose_view, name='glucoseLevel'),
     path('glucoseLevel/glucose_last_week', views.glucose_last_week, name='glucose_last_week'),
     path('glucoseLevel/add/', views.add_glucose, name='add_glucose'),
@@ -54,4 +37,3 @@ urlpatterns = [
     path('video-call/', views.video_call, name='video_call'),
     
 ]
->>>>>>> df65bc42646209401f820253ff6c76c734627aed

@@ -1,11 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-<<<<<<< HEAD
-from .models import Ville, Quartier, Patient, User, Doctor,ChatMessage
-=======
 from .models import Ville, Quartier, Patient, User, Doctor,ChatMessage,MesureGlycemie,Message,Room
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
 
 # Personnaliser l'administration des utilisateurs
 @admin.register(User)
@@ -40,21 +36,11 @@ class PatientAdmin(admin.ModelAdmin):
 class DoctorAdmin(admin.ModelAdmin):
     list_display = ('user', 'specialization', 'license_number')
     search_fields = ('user__username', 'user__email', 'specialization')
-<<<<<<< HEAD
-    list_filter = ('specialization',)
-=======
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
     
 @admin.register(ChatMessage)
 class ChatMessageAdmin(admin.ModelAdmin):
     list_display = ('user', 'message', 'response', 'created_at')
     search_fields = ('user__username', 'message', 'response')  
-<<<<<<< HEAD
-    list_filter = ('created_at',)  
-    ordering = ('created_at',)   
-
-
-=======
     ordering = ('created_at',)   
 
 @admin.register(MesureGlycemie)
@@ -66,4 +52,3 @@ class MesureGlycemieAdmin(admin.ModelAdmin):
 admin.site.register(Message)  
 admin.site.register(Room)   
       
->>>>>>> df65bc42646209401f820253ff6c76c734627aed

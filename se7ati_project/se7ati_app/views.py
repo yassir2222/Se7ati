@@ -2,14 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from .forms import PatientSignUpForm , DoctorSignUpForm, LoginForm
-<<<<<<< HEAD
-from .models import Patient, Doctor, User ,Ville,Quartier,ChatMessage
-from django.http import HttpResponse, JsonResponse
-from django.http import HttpResponse
-=======
 from .models import Patient, Doctor, User ,Ville,Quartier,ChatMessage,MesureGlycemie,Room,Message
 from django.http import HttpResponse, JsonResponse
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
 from django.shortcuts import render , get_object_or_404
 import requests
 from bs4 import BeautifulSoup
@@ -18,21 +12,12 @@ from datetime import datetime
 import csv
 import os
 import re
-<<<<<<< HEAD
-=======
 from pathlib import Path
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
 from django.conf import settings
 from .stream_chat_service import StreamChatService
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 import google.generativeai as genai
-<<<<<<< HEAD
-
-import pandas as pd
-import numpy as np
-import markdown
-=======
 from django.utils.timezone import now, timedelta  
 from django.urls import reverse
 from urllib.parse import urlparse
@@ -44,18 +29,14 @@ import hashlib
 import time
 import uuid
 from django.http import Http404
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
 
 def home(request):
     return render(request,'index.html')
 
-<<<<<<< HEAD
-=======
 def Dr_home(request):
     return render(request,'doctor/dashboard.html')
 
 
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
 def patient_register(request):
     if request.method == 'POST':
         form = PatientSignUpForm(request.POST)
@@ -74,16 +55,10 @@ def doctor_register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-<<<<<<< HEAD
-            return redirect('login')  
-        form = DoctorSignUpForm()
-    return render(request, 'registration/register.html', {'form': form})
-=======
             return redirect('login') 
     else :    
         form = DoctorSignUpForm()
     return render(request, 'registration/register_doctor.html', {'form': form})
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
 
 
 def user_login(request):
@@ -114,11 +89,7 @@ def login_view(request):
                 if user.user_type == 'patient':
                     return redirect('home')
                 elif user.user_type == 'doctor':
-<<<<<<< HEAD
-                    return redirect('home')
-=======
                     return redirect('Dr_home')
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
                 else:
                     return redirect('home')  # Fallback
         else:
@@ -219,15 +190,9 @@ def chercher_pharmacies_view(request):
             print("####################################################")
             pharmacies_data.append(data_pharmacie.copy())
         
-<<<<<<< HEAD
- 
-        csv_path = os.path.join("F:\Projet_Se7ati\se7ati_project\se7ati_app\static", 'pharmacies_data.csv')
-        save_to_csv(pharmacies_data, csv_path)
-=======
         parent = Path(__file__).parent
         path = os.path.join(parent, 'static', 'pharmacies_data.csv')
         save_to_csv(pharmacies_data, path)
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
          
         
     else:
@@ -316,17 +281,6 @@ def convert_string(input_string):
 def about(request):
     return HttpResponse('About page')
 
-<<<<<<< HEAD
-def serve_csv(request):
-    file_path = os.path.join('F:\Projet_Se7ati\se7ati_project\se7ati_app\static\Quartier_ville.csv')
-    with open(file_path, 'r', encoding='utf-8') as file:
-        data = file.read()
-    response = HttpResponse(data, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Quartier_ville.csv"'
-    return response
-=======
-
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
 
 @login_required
 def chat_home(request):
@@ -427,11 +381,7 @@ def edit_profile_update(request,user_id):
     return render(request, 'tools/edit_profil.html', {'patient': patient , 'date_naissance': convert_date_format_inverse(patient.date_naissance)})
 
 def convert_date_format(date_string):
-<<<<<<< HEAD
-
-=======
         print("###########################"+date_string)
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
         parts = date_string.strip().split('/')
         if len(parts) != 3:
             return None
@@ -447,11 +397,7 @@ def convert_date_format(date_string):
         return f"{year:04d}-{month:02d}-{day:02d}"
     
 def convert_date_format_inverse(date_string):
-<<<<<<< HEAD
-
-=======
     if(date_string is not None):
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
         parts = date_string.strip().split('-')
         if len(parts) != 3:
             return None
@@ -466,22 +412,15 @@ def convert_date_format_inverse(date_string):
             return None
 
         return f"{day:02d}/{month:02d}/{year:04d}"
-<<<<<<< HEAD
-=======
     else:
         return None
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
     
     
 def diabetes_predicton(request):
     if(request.method == 'POST'):
-<<<<<<< HEAD
-        data = pd.read_csv(r'F:/Projet_Se7ati/se7ati_project/se7ati_app/static/diabetes.csv')  
-=======
         parent = Path(__file__).parent
         path = os.path.join(parent, 'static', 'diabetes.csv')
         data = pd.read_csv(path)
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
         x = data.drop('Outcome', axis=1)
         y = data['Outcome']  
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
@@ -520,13 +459,6 @@ def diabetes_predicton(request):
         current_user = request.user
         if current_user.is_authenticated:
             patient = Patient.objects.get(user_id=current_user.id)
-<<<<<<< HEAD
-            date_naissance = patient.date_naissance
-            
-            current_year = datetime.now().year
-            print(current_year - date_naissance.year)
-            return render(request, 'tools/diabetes_risk_prediciton.html', {'patient': patient,'age': current_year - date_naissance.year})
-=======
             date_naissance = patient.date_naissance.year if patient.date_naissance else 0
             current_year = datetime.now().year
             if patient.date_naissance is None :
@@ -538,7 +470,6 @@ def diabetes_predicton(request):
             
             
             return render(request, 'tools/diabetes_risk_prediciton.html', {'patient': patient,'age': age_calculated})
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
         else:
             return render(request, 'tools/diabetes_risk_prediciton.html')
     
@@ -560,10 +491,6 @@ def chat_bot(request):
                 """
 
         prompt = f"{contexte}\n\nQuestion: {user_input}\nRéponse:"
-<<<<<<< HEAD
-
-=======
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
         try:
            
             model = genai.GenerativeModel('gemini-2.0-flash')
@@ -581,10 +508,6 @@ def chat_bot(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     chat_history = ChatMessage.objects.filter(user=request.user).order_by('created_at')
-<<<<<<< HEAD
-    return render(request, 'chat_bot/chat_main.html', {'chat_history': chat_history})
-    
-=======
     return render(request, 'chat_bot/chat_with_user.html', {'chat_history': chat_history})
 
 def glucoseLevel(request):
@@ -1036,4 +959,3 @@ def get_maessage(request , room):
     room_details = Room.objects.get(name=room)
     messages = Message.objects.filter(room = room_details.id).order_by('date')
     return JsonResponse({'message': list(messages.values())}) 
->>>>>>> df65bc42646209401f820253ff6c76c734627aed

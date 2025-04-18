@@ -1,12 +1,6 @@
 from django.db import models
-<<<<<<< HEAD
-
-# Create your models here.
-from django.db import models
-=======
 from datetime import datetime
 
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser): 
@@ -64,9 +58,6 @@ class ChatMessage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-<<<<<<< HEAD
-        return f"Chat by {self.user.username} at {self.created_at}" 
-=======
         return f"Chat by {self.user.username} at {self.created_at}" 
     
     
@@ -88,4 +79,3 @@ class Message(models.Model):
     date = models.DateTimeField(default=datetime.now , blank= True) 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, blank=True)       
->>>>>>> df65bc42646209401f820253ff6c76c734627aed
